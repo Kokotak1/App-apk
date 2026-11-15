@@ -52,14 +52,14 @@ jobs:
           test -f countdown/build/outputs/apk/debug/countdown-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: pipboy-red-v1.8-two-apks-install-both
+          name: pipboy-red-v1.9-two-apks-install-both
           path: |
             watchface/build/outputs/apk/debug/watchface-debug.apk
             countdown/build/outputs/apk/debug/countdown-debug.apk
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
-          name: pipboy-red-v1.8-watch-face-only
+          name: pipboy-red-v1.9-watch-face-only
           path: watchface/build/outputs/apk/debug/watchface-debug.apk
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
