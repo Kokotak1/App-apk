@@ -1,0 +1,19 @@
+plugins {
+    id("com.android.application")
+}
+android {
+    namespace = "cz.youarefree.watchface"
+    compileSdk = 36
+    defaultConfig {
+        applicationId = "cz.youarefree.watchface"
+        minSdk = 33
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0"
+    }
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+        }
+    }
+}
