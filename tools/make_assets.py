@@ -20,12 +20,11 @@ def font(sz, bold=False):
 
 src = ROOT / "tools/pipboy_bg.b64"
 art = Image.open(BytesIO(base64.b64decode(src.read_text().strip()))).convert("RGB")
-# Photo calibration (15 Nov 2026): the green dial center was at x~422.5
-# but the physical bezel center at x~415 on the photographed watch.
-# Compensate with a left shift of 9 WFF units, applying the same correction
-# to dial artwork, AOD, all three hands, center cap, live count and date.
+# Version 1.6 calibration: do NOT shift the entire face left.
+# The bezel and all WFF hands must share exactly the display center (225,225).
+# Source artwork alone is registered to this center before rasterization.
 SOURCE_CENTER = (221.5, 219.0)
-TARGET_CENTER = (S / 2 - 9, S / 2)  # -9px x correction, measured from real watch photo
+TARGET_CENTER = (S / 2, S / 2)
 DIAL_SCALE = 1.04  # leaves a small safety margin inside the round screen
 art = art.resize((S, S), Image.Resampling.LANCZOS)
 inverse_scale = 1.0 / DIAL_SCALE
@@ -49,17 +48,17 @@ d = ImageDraw.Draw(aod)
 for i in range(12):
     a = radians(i * 30 - 90)
     r1, r2 = (187, 203) if i % 3 == 0 else (194, 202)
-    x1, y1 = 216+r1*cos(a), 225+r1*sin(a)
-    x2, y2 = 216+r2*cos(a), 225+r2*sin(a)
+    x1, y1 = 225+r1*cos(a), 225+r1*sin(a)
+    x2, y2 = 225+r2*cos(a), 225+r2*sin(a)
     d.line((x1,y1,x2,y2), fill=(82,84,84,255) if i%3 == 0 else (46,49,49,255), width=3 if i%3 == 0 else 2)
-d.text((216, 82), "12", fill=(100,100,100,255), font=font(35, True), anchor="mm")
-d.text((382,225), "3", fill=(95,95,95,255), font=font(29,True), anchor="mm")
-d.text((216,384), "6", fill=(95,95,95,255), font=font(29,True), anchor="mm")
-d.text((51,225), "9", fill=(95,95,95,255), font=font(29,True), anchor="mm")
+d.text((225, 82), "12", fill=(100,100,100,255), font=font(35, True), anchor="mm")
+d.text((391,225), "3", fill=(95,95,95,255), font=font(29,True), anchor="mm")
+d.text((225,384), "6", fill=(95,95,95,255), font=font(29,True), anchor="mm")
+d.text((60,225), "9", fill=(95,95,95,255), font=font(29,True), anchor="mm")
 aod.save(OUT / "aod_background.png", optimize=True)
 
 def hand(name, w, h, base):
-    """Slim, elongated, tapered instrument hands; all pivots at x=216,y=225."""
+    """Slim, elongated, tapered instrument hands; all pivots at x=225,y=225."""
     z = 6  # antialias at 6x resolution
     im = Image.new("RGBA", (w*z, h*z), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
@@ -99,7 +98,7 @@ def hand(name, w, h, base):
                fill=(101,113,119,255),width=round(2.8*z))
     im.resize((w,h),Image.Resampling.LANCZOS).save(OUT / (name + ".png"))
 
-# Common mechanical pivot, left-shifted together with the photographed dial:
+# All three WFF pivots coincide exactly at (225,225):
 # hour 75+150=225; minute 47+178=225; second 35+190=225.
 hand("hour",30,174,150)
 hand("minute",24,194,178)
@@ -113,23 +112,23 @@ pivot.save(OUT / "center.png")
 # Preview is illustrative; the WFF clock, count, and date remain live.
 preview=art.copy()
 dp=ImageDraw.Draw(preview)
-dp.text((162,157),"80",font=font(70,True),fill=RED,anchor="mm",
+dp.text((171,157),"80",font=font(70,True),fill=RED,anchor="mm",
         stroke_width=1,stroke_fill=(80,0,0))
-dp.text((213,319),"18.11.2026",font=font(21),fill=(245,245,245),anchor="mm")
+dp.text((222,319),"18.11.2026",font=font(21),fill=(245,245,245),anchor="mm")
 # Simulated 14:15:30 preview: same images, angles and center as runtime.
 # Text is drawn afterward just as the live WFF text overlays the hands.
 for name, x, y, clockwise in [
-    ("hour", 201, 75, 67.5),
-    ("minute", 204, 47, 90.0),
-    ("second", 213, 35, 180.0),
+    ("hour", 210, 75, 67.5),
+    ("minute", 213, 47, 90.0),
+    ("second", 222, 35, 180.0),
 ]:
     hand_img = Image.open(OUT / (name + ".png")).convert("RGBA")
     layer = Image.new("RGBA",(S,S),(0,0,0,0))
     layer.alpha_composite(hand_img,(x,y))
     preview=Image.alpha_composite(
         preview.convert("RGBA"),
-        layer.rotate(-clockwise,resample=Image.Resampling.BICUBIC,center=(216,225)))
-preview.alpha_composite(Image.open(OUT / "center.png").convert("RGBA"),(208,217))
+        layer.rotate(-clockwise,resample=Image.Resampling.BICUBIC,center=(225,225)))
+preview.alpha_composite(Image.open(OUT / "center.png").convert("RGBA"),(217,217))
 # Last: live counter + date, corresponding to the WFF layer order.
 dp=ImageDraw.Draw(preview)
 dp.text((162,157),"80",font=font(70,True),fill=RED,anchor="mm",
