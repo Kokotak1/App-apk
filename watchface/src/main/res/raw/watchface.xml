@@ -20,7 +20,12 @@
       <MinuteHand resource="minute" x="213" y="47" width="24" height="194" pivotX="0.5" pivotY="0.917526">
         <Variant mode="AMBIENT" target="alpha" value="110" />
       </MinuteHand>
-      <!-- ECO: no seconds hand and no per-second animation. -->
+      <!-- ECO WITH SECONDS: one short step per second, never a 15 Hz sweep.
+           The second hand is disabled in ambient mode. -->
+      <SecondHand resource="second" x="222" y="35" width="6" height="213" pivotX="0.5" pivotY="0.892019">
+        <Variant mode="AMBIENT" target="alpha" value="0" />
+        <Tick duration="0.05" strength="1.0" />
+      </SecondHand>
     </AnalogClock>
     <PartImage x="217" y="217" width="16" height="16">
       <Variant mode="AMBIENT" target="alpha" value="110" />
