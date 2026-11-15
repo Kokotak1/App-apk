@@ -40,3 +40,13 @@ Poznámka: APK jsou debug sestavení pro osobní test, nejsou to produkční Goo
 - Ostatní vzhled a kliknutí na červenou 80 zachované.
 - AOD může být vypnuté operačním systémem, například když hodinky nejsou na ruce nebo se zapne úsporný režim; tuto situaci ciferník nemůže obejít.
 - Nové ID ciferníku `cz.youarefree.pipboyred9`; aplikace hodinového odpočtu zůstává `cz.youarefree.pipboy.countdown7`.
+
+
+## Verze 2.0 – úsporný režim baterie
+- V aktivním režimu se vteřinová ručička posouvá po jedné sekundě namísto 15 Hz plynulého pohybu; WFF `Tick duration=0.05`.
+- V AOD zůstávají hodinová a minutová ručička, ale s průhledností 110/255. Vteřinovka je vypnutá.
+- Středová krytka v AOD je tlumená, příchozí texty/počet služeb a datum zůstávají.
+- Podklad AOD je černý; původní zelený ciferník se zobrazí pouze při probuzení.
+- Baterie 48 % = 2/5 segmentů, živý údaj v procentech zůstává.
+- Pouze ciferník se nově instaluje jako `cz.youarefree.pipboyred20`; odpočet `cz.youarefree.pipboy.countdown7` není třeba znovu instalovat.
+- Výsledná výdrž se liší podle jasu, zapnutí AOD, LTE, GPS, notifikací a dalších funkcí hodinek; úsporu je potřeba změřit na zařízení.
