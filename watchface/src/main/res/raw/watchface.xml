@@ -1,63 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WatchFace width="450" height="450">
-    <Metadata key="CLOCK_TYPE" value="ANALOG" />
-    <Scene backgroundColor="#ff000000">
-        <!-- Decorative green ring, dial markings and hour numerals -->
-        <PartImage x="0" y="0" width="450" height="450">
-            <Variant mode="AMBIENT" target="alpha" value="0" />
-            <Image resource="background" />
-        </PartImage>
-        <!-- Live analog hands and central pivot -->
-        <AnalogClock x="0" y="0" width="450" height="450">
-            <HourHand resource="hour" x="205" y="145" width="40" height="100" pivotX="0.5" pivotY="0.8">
-                <Variant mode="AMBIENT" target="alpha" value="0" />
-            </HourHand>
-            <MinuteHand resource="minute" x="213" y="104" width="24" height="134" pivotX="0.5" pivotY="0.903">
-                <Variant mode="AMBIENT" target="alpha" value="0" />
-            </MinuteHand>
-            <SecondHand resource="second" x="221" y="70" width="8" height="180" pivotX="0.5" pivotY="0.861">
-                <Variant mode="AMBIENT" target="alpha" value="0" />
-                <Sweep frequency="15" />
-            </SecondHand>
-        </AnalogClock>
-        <PartImage x="215" y="215" width="20" height="20">
-            <Variant mode="AMBIENT" target="alpha" value="0" />
-            <Image resource="center" />
-        </PartImage>
-        <!-- Single label. No "SLUŽEB" suffix. -->
-        <PartText x="85" y="120" width="280" height="39">
-            <Variant mode="AMBIENT" target="alpha" value="0" />
-            <Text align="CENTER">
-                <Font family="SYNC_TO_DEVICE" size="26" weight="BOLD" color="#fff5f5f5"><![CDATA[ZBÝVÁ]]></Font>
-            </Text>
-        </PartText>
-        <!-- 18 Nov 2026 is first of 80 service dates. Current service
-             remains counted through the end of that date.
-             DAY_OF_YEAR is local calendar based; no DST drift.
-             43 = 365 - day-of-year(2026-11-18), so 2027 day 1 is d=44.
-             clamp ensures stable behavior outside the schedule. -->
-        <PartText x="85" y="150" width="280" height="90">
-            <Variant mode="AMBIENT" target="alpha" value="0" />
-            <Text align="CENTER">
-                <Font family="SYNC_TO_DEVICE" size="77" weight="BOLD" color="#ff42ff08">
-                    <Template><![CDATA[%d]]>
-                        <Parameter expression="round([YEAR] &lt; 2026 ? 80 : ([YEAR] &gt; 2027 ? 0 : clamp(80 - floor((([YEAR] == 2026 ? [DAY_OF_YEAR] - 322 : 43 + [DAY_OF_YEAR]) + 3) / 4), 0, 80)))"/>
-                    </Template>
-                </Font>
-            </Text>
-        </PartText>
-        <!-- Exactly one live date, at bottom of dial -->
-        <PartText x="88" y="315" width="274" height="40">
-            <Variant mode="AMBIENT" target="alpha" value="0" />
-            <Text align="CENTER">
-                <Font family="SYNC_TO_DEVICE" size="28" color="#fff5f5f5">
-                    <Template><![CDATA[%s.%s.%d]]>
-                        <Parameter expression="[DAY_Z]"/>
-                        <Parameter expression="[MONTH_Z]"/>
-                        <Parameter expression="[YEAR]"/>
-                    </Template>
-                </Font>
-            </Text>
-        </PartText>
-    </Scene>
+  <Metadata key="CLOCK_TYPE" value="ANALOG" />
+  <Scene backgroundColor="#ff000000">
+    <!-- The user's approved Pip-Boy / Vault Boy art, visible only while awake. -->
+    <PartImage x="0" y="0" width="450" height="450">
+      <Variant mode="AMBIENT" target="alpha" value="0" />
+      <Image resource="background" />
+    </PartImage>
+    <!-- Minimalist energy-saving AOD face, never superimposed on normal dial. -->
+    <PartImage x="0" y="0" width="450" height="450" alpha="0">
+      <Variant mode="AMBIENT" target="alpha" value="255" />
+      <Image resource="aod_background" />
+    </PartImage>
+
+    <AnalogClock x="0" y="0" width="450" height="450">
+      <HourHand resource="hour" x="205" y="145" width="40" height="100" pivotX="0.5" pivotY="0.8" />
+      <MinuteHand resource="minute" x="213" y="104" width="24" height="134" pivotX="0.5" pivotY="0.903" />
+      <SecondHand resource="second" x="221" y="70" width="8" height="180" pivotX="0.5" pivotY="0.861">
+        <Variant mode="AMBIENT" target="alpha" value="0" />
+        <Sweep frequency="15" />
+      </SecondHand>
+    </AnalogClock>
+    <PartImage x="215" y="215" width="20" height="20">
+      <Image resource="center" />
+    </PartImage>
+
+    <!-- Live service counter in the empty red terminal on the left. -->
+    <PartText x="87" y="117" width="167" height="87">
+      <Variant mode="AMBIENT" target="alpha" value="0" />
+      <Text align="CENTER">
+        <Font family="SYNC_TO_DEVICE" size="76" weight="BOLD" color="#ffff1919">
+          <Template><![CDATA[%d]]>
+            <Parameter expression="round([YEAR] &lt; 2026 ? 80 : ([YEAR] &gt; 2027 ? 0 : clamp(80 - floor((([YEAR] == 2026 ? [DAY_OF_YEAR] - 322 : 43 + [DAY_OF_YEAR]) + 3) / 4), 0, 80)))"/>
+          </Template>
+        </Font>
+      </Text>
+    </PartText>
+    <!-- Keep the same live count in AOD, less luminous to save power. -->
+    <PartText x="85" y="131" width="280" height="85" alpha="0">
+      <Variant mode="AMBIENT" target="alpha" value="255" />
+      <Text align="CENTER">
+        <Font family="SYNC_TO_DEVICE" size="70" weight="BOLD" color="#ff993434">
+          <Template><![CDATA[%d]]>
+            <Parameter expression="round([YEAR] &lt; 2026 ? 80 : ([YEAR] &gt; 2027 ? 0 : clamp(80 - floor((([YEAR] == 2026 ? [DAY_OF_YEAR] - 322 : 43 + [DAY_OF_YEAR]) + 3) / 4), 0, 80)))"/>
+          </Template>
+        </Font>
+      </Text>
+    </PartText>
+    <!-- Ambient label, as awake label is already part of background bitmap. -->
+    <PartText x="110" y="97" width="230" height="38" alpha="0">
+      <Variant mode="AMBIENT" target="alpha" value="255" />
+      <Text align="CENTER">
+        <Font family="SYNC_TO_DEVICE" size="24" color="#ff999999"><![CDATA[ZBÝVÁ]]></Font>
+      </Text>
+    </PartText>
+
+    <!-- Live calendar date in the empty lower metal plate. -->
+    <PartText x="112" y="296" width="225" height="42">
+      <Variant mode="AMBIENT" target="alpha" value="0" />
+      <Text align="CENTER">
+        <Font family="SYNC_TO_DEVICE" size="23" color="#fff5f5f5">
+          <Template><![CDATA[%s.%s.%d]]>
+            <Parameter expression="[DAY_Z]"/>
+            <Parameter expression="[MONTH_Z]"/>
+            <Parameter expression="[YEAR]"/>
+          </Template>
+        </Font>
+      </Text>
+    </PartText>
+    <PartText x="108" y="294" width="235" height="44" alpha="0">
+      <Variant mode="AMBIENT" target="alpha" value="255" />
+      <Text align="CENTER">
+        <Font family="SYNC_TO_DEVICE" size="22" color="#ff999999">
+          <Template><![CDATA[%s.%s.%d]]>
+            <Parameter expression="[DAY_Z]"/>
+            <Parameter expression="[MONTH_Z]"/>
+            <Parameter expression="[YEAR]"/>
+          </Template>
+        </Font>
+      </Text>
+    </PartText>
+  </Scene>
 </WatchFace>

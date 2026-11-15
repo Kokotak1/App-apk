@@ -1,18 +1,16 @@
-# You Are Free – Galaxy Watch 8 Classic LTE
+# You Are Free – Pip-Boy RED / AOD
 
-Vlastní analogový ciferník pro Samsung Galaxy Watch 8 Classic LTE. Černé pozadí, stříbrné ručičky, zelený kruh, jeden datum dole a nahoře pouze **ZBÝVÁ** plus proměnlivé zelené číslo. Žádný nápis „služeb“ ani „You Are Free“ se na ciferníku nezobrazuje.
+Samostatná varianta ciferníku pro Samsung Galaxy Watch 8 Classic LTE.
 
-## Počítadlo
-První plánovaná služba **18. 11. 2026**, dále každé **4 dny**. Do cílového dne **1. 10. 2027** připadá 80 služeb. Počítadlo ukazuje 80 do konce dne 18. 11., následující den 79, po každé další službě se sníží o jednu a **1. 10. 2027** je 0. Výpočet používá lokální datum hodinek; změny času zima/léto ho neovlivní. Počítadlo je omezené na hodnoty 0–80.
+- Schválené pozadí s Vault Boyem napravo, zeleným kruhem a červeným počítadlem zbývajících služeb.
+- Analogové hodiny s hodinovou, minutovou a zelenou vteřinovou ručičkou.
+- Živé datum v dolní kovové destičce; žádný údaj není napevno.
+- Always On Display: černý úsporný režim s hodinovou a minutovou ručičkou, tlumeným počítadlem a živým datem, ale **bez vteřinové ručičky**.
+- Od 18. 11. 2026 každé čtyři dny; počítadlo začíná na **80** a 1. 10. 2027 dosáhne **0**.
+- Android applicationId **cz.youarefree.pipboy**: lze instalovat vedle předchozí verze You Are Free.
 
-## Projekt
-Projekt používá deklarativní [Watch Face Format](https://developer.android.com/training/wearables/wff), aby fungoval na moderních hodinkách Wear OS. Žádná telefonní aplikace není potřeba. Přesné obrázky ciferníku vznikají skriptem v `tools/make_assets.py` a texty a ručičky se na hodinkách vykreslují živě.
+## Instalace
 
-## Sestavení bez Android Studia
-V záložce [Actions](https://github.com/Kokotak1/App-apk/actions) vyberte **Build Watch Face APK** a stiskněte **Run workflow**. Po úspěšném běhu najdete instalační balíček **you-are-free-debug-apk** v sekci Artifacts. Debug APK je určen pro vlastní testování, nikoli pro vydání v Google Play. Lze jej nainstalovat pomocí ADB do hodinek s povoleným laděním. Automatický běh se spouští také při změnách zdrojového projektu.
+[GitHub Actions – větev Pip-Boy RED](https://github.com/Kokotak1/App-apk/actions?query=branch%3Apipboy-red-aod) → nejnovější úspěšný **Build Pip-Boy Watch Face APK** → **Artifacts** → `pipboy-red-aod-debug-apk` → rozbalit ZIP a pomocí Wear Installer 2 instalovat APK do hodinek.
 
-## Stav
-Zdrojový projekt, časové výpočty a sestavovací workflow jsou připravené, ale funkčnost sestavení a přesné vykreslení je třeba ověřit výsledkem GitHub Actions a na skutečných hodinkách. Obrázek návrhu není přímou bitmapou finálního ciferníku.
-
-## Poznámka k AOD
-Ciferník si nastavení Always On Display na zařízení nemůže sám vypnout. Pokud AOD nechcete, vypněte jej v nastavení Galaxy Watch.
+**Důležité:** Tato samostatná větev zachovává původní ciferník na `main`. APK je testovací, bez podpisu pro publikování v Google Play.

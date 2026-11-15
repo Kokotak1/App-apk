@@ -1,114 +1,74 @@
 #!/usr/bin/env python3
-"""Generate small, clean PNG assets for the resource-only WFF watch face.
-Requires Pillow. This script intentionally avoids copied logos and fonts.
-"""
+"""Prepare the approved Pip-Boy artwork, live hands, and low-power AOD assets."""
 from pathlib import Path
-from math import cos, sin, radians
+from io import BytesIO
+from math import radians, sin, cos
+import base64
 from PIL import Image, ImageDraw, ImageFont
 
-OUT = Path(__file__).resolve().parents[1] / "watchface/src/main/res/drawable"
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "watchface/src/main/res/drawable"
 OUT.mkdir(parents=True, exist_ok=True)
-S = 900
-SC = S / 450
-GREEN = (67, 255, 17, 255)
-SOFT = (245, 245, 250, 255)
-GRAY = (130, 138, 151, 255)
+S = 450
+RED = (255, 25, 25, 255)
+GREEN = (40, 242, 40, 255)
+SILVER = (236, 241, 245, 255)
 
+def font(sz, bold=False):
+    fam = "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf"
+    return ImageFont.truetype("/usr/share/fonts/truetype/dejavu/" + fam, sz)
 
-def font(size, bold=True):
-    name = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-    return ImageFont.truetype(name, size)
+src = ROOT / "tools/pipboy_bg.b64"
+art = Image.open(BytesIO(base64.b64decode(src.read_text().strip()))).convert("RGB")
+art = art.resize((S, S), Image.Resampling.LANCZOS)
+art.save(OUT / "background.png", optimize=True)
 
+# Always-on display: dark background with sparse neutral markings.
+aod = Image.new("RGBA", (S, S), (0, 0, 0, 255))
+d = ImageDraw.Draw(aod)
+for i in range(12):
+    a = radians(i * 30 - 90)
+    r1, r2 = (187, 203) if i % 3 == 0 else (194, 202)
+    x1, y1 = 225+r1*cos(a), 225+r1*sin(a)
+    x2, y2 = 225+r2*cos(a), 225+r2*sin(a)
+    d.line((x1,y1,x2,y2), fill=(82,84,84,255) if i%3 == 0 else (46,49,49,255), width=3 if i%3 == 0 else 2)
+d.text((225, 82), "12", fill=(100,100,100,255), font=font(35, True), anchor="mm")
+d.text((391,225), "3", fill=(95,95,95,255), font=font(29,True), anchor="mm")
+d.text((225,384), "6", fill=(95,95,95,255), font=font(29,True), anchor="mm")
+d.text((60,225), "9", fill=(95,95,95,255), font=font(29,True), anchor="mm")
+aod.save(OUT / "aod_background.png", optimize=True)
 
-def xy(r, degrees):
-    a = radians(degrees - 90)
-    return (S / 2 + r * cos(a), S / 2 + r * sin(a))
-
-back = Image.new("RGBA", (S, S), (0, 0, 0, 255))
-d = ImageDraw.Draw(back)
-# Matte black dial with glowing marker ring
-for i in range(80):
-    a = i * 360 / 80
-    p1, p2 = xy(370, a + 1), xy(387, a + 1)
-    d.line((p1, p2), fill=GREEN, width=8)
-for i in range(60):
-    a = i * 6
-    p1 = xy(336 if i % 5 else 326, a)
-    p2 = xy(352, a)
-    d.line((p1, p2), fill=SOFT if i % 5 == 0 else GRAY, width=5 if i % 5 == 0 else 2)
-# Hour numerals set near cardinal points
-numeral = font(88)
-for label, x, y in [("12", S / 2, 155), ("3", 755, S / 2),
-                    ("6", S / 2, 733), ("9", 143, S / 2)]:
-    d.text((x, y), label, font=numeral, fill=SOFT, anchor="mm")
-back.save(OUT / "background.png")
-
-
-def hand(name, w, h, base, tip, color):
-    """Draw a fully extended hand inside its actual WFF image bounds.
-
-    The clock's pivot is at base/h, and the blade stretches from the pivot
-    to the tip. Oversample for anti-aliased diagonal edges.
-    """
-    z = 4
-    im = Image.new("RGBA", (w * z, h * z), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(im)
-    def point(x, y):
-        return (round(x*z), round(y*z))
-    x = w/2
-    if name == "second":
-        draw.line([point(x, 4), point(x, h-2)], fill=GREEN, width=round(w*.40*z))
-        draw.ellipse([point(x-3,base-3),point(x+3,base+3)], fill=SOFT)
+def hand(name, w, h, base, color, accent=None):
+    z=4
+    im=Image.new("RGBA", (w*z,h*z),(0,0,0,0))
+    draw=ImageDraw.Draw(im)
+    p=lambda x,y:(round(x*z),round(y*z))
+    cx=w/2
+    if name=="second":
+        draw.line((p(cx,3),p(cx,h-3)),fill=GREEN,width=max(4,int(w*.4*z)))
     else:
-        # Metallic arrow, green inset, narrow tail behind center pivot.
-        contour = [
-            point(x, 3),
-            point(x+w*.12, 8),
-            point(x+w*.33, base*.65),
-            point(x+w*.33, base+5),
-            point(x+w*.14, h-3),
-            point(x-w*.14, h-3),
-            point(x-w*.33, base+5),
-            point(x-w*.33, base*.65),
-            point(x-w*.12, 8),
-        ]
-        draw.polygon(contour, fill=color)
-        draw.line([point(x, 12), point(x, base-11)],
-                  fill=GREEN, width=round(max(3, w*.14)*z))
-        draw.line([point(x-w*.33,base*.67), point(x-w*.33,base+5)],
-                  fill=(150,157,165,255), width=max(1,z//2))
-    im.resize((w, h), Image.Resampling.LANCZOS).save(OUT / f"{name}.png")
+        draw.polygon([p(cx,2),p(cx+w*.14,9),p(cx+w*.34,base*.69),
+                      p(cx+w*.34,base+4),p(cx+w*.12,h-3),
+                      p(cx-w*.12,h-3),p(cx-w*.34,base+4),
+                      p(cx-w*.34,base*.69),p(cx-w*.14,9)],fill=color)
+        if accent:
+            draw.line((p(cx,13),p(cx,base-15)),fill=accent,width=max(3,int(w*.14*z)))
+    im.resize((w,h), Image.Resampling.LANCZOS).save(OUT / (name+".png"))
 
-hand("hour", 40, 100, 80, 0, (201, 209, 218, 255))
-hand("minute", 24, 134, 121, 0, (226, 231, 239, 255))
-hand("second", 8, 180, 155, 0, GREEN)
-center = Image.new("RGBA", (40, 40), (0, 0, 0, 0))
-dc = ImageDraw.Draw(center)
-dc.ellipse((2, 2, 38, 38), fill=(22, 25, 28, 255), outline=GREEN, width=5)
-dc.ellipse((16, 16, 24, 24), fill=SOFT)
-center.resize((20, 20), Image.Resampling.LANCZOS).save(OUT / "center.png")
+hand("hour",40,100,80,SILVER,(75,230,71,255))
+hand("minute",24,134,121,SILVER,(75,230,71,255))
+hand("second",8,180,155,GREEN)
+pivot=Image.new("RGBA",(20,20),(0,0,0,0))
+dc=ImageDraw.Draw(pivot)
+dc.ellipse((1,1,19,19),fill=(120,128,133,255),outline=(223,231,236,255),width=3)
+dc.ellipse((8,8,12,12),fill=GREEN)
+pivot.save(OUT / "center.png")
 
-# Preview is a static 10:10 example, with the same hands used at runtime.
-thumb = back.resize((450, 450), Image.Resampling.LANCZOS)
-
-def add_preview_hand(name, clockwise_angle, pivot_y):
-    img = Image.open(OUT / f"{name}.png").convert("RGBA")
-    w, h = img.size
-    lay = Image.new("RGBA", (450,450), (0,0,0,0))
-    lay.alpha_composite(img, (round(225-w/2), round(225-h*pivot_y)))
-    lay = lay.rotate(-clockwise_angle, center=(225,225), resample=Image.Resampling.BICUBIC)
-    thumb.alpha_composite(lay)
-
-add_preview_hand("hour", 305, 0.8)
-add_preview_hand("minute", 60, 0.903)
-add_preview_hand("second", 210, 0.861)
-thumb.alpha_composite(Image.open(OUT / "center.png").convert("RGBA"), (215,215))
-# Keep the counter and single date readable even beneath crossed hands.
-overlay = Image.new("RGBA", (S, S), (0, 0, 0, 0))
-p = ImageDraw.Draw(overlay)
-p.text((S/2, 288), "ZBÝVÁ", font=font(47), fill=SOFT, anchor="mm")
-p.text((S/2, 384), "80", font=font(143), fill=GREEN, anchor="mm")
-p.text((S/2, 664), "15.11.2026", font=font(53, False), fill=SOFT, anchor="mm")
-thumb.alpha_composite(overlay.resize((450,450), Image.Resampling.LANCZOS))
-thumb.save(OUT / "preview.png")
-print("Created:", ", ".join(p.name for p in OUT.glob("*.png")))
+# Preview is illustrative; the WFF clock, count, and date remain live.
+preview=art.copy()
+dp=ImageDraw.Draw(preview)
+dp.text((171,157),"80",font=font(70,True),fill=RED,anchor="mm",
+        stroke_width=1,stroke_fill=(80,0,0))
+dp.text((222,319),"18.11.2026",font=font(21),fill=(245,245,245),anchor="mm")
+preview.save(OUT / "preview.png",optimize=True)
+print("Generated Pip-Boy background, AOD background, hands and preview")

@@ -1,9 +1,9 @@
-name: Build Watch Face APK
+name: Build Pip-Boy Watch Face APK
 
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [pipboy-red-aod]
     paths:
       - ".github/workflows/build-apk.yml"
       - "watchface/**"
@@ -25,21 +25,20 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Test service dates
+      - name: Test four-day service cycle
         run: python tools/test_countdown.py
-      - name: Generate watch-face bitmaps
+      - name: Generate image resources
         run: |
           python -m pip install --disable-pip-version-check Pillow==11.3.0
           python tools/make_assets.py
-      - name: Validate Watch Face Format XML
+      - name: Validate watch face XML
         run: |
           curl -fL --retry 3 --output /tmp/wff-validator.jar https://github.com/google/watchface/releases/download/release/wff-validator.jar
           java -jar /tmp/wff-validator.jar 1 watchface/src/main/res/raw/watchface.xml
       - name: Install Android 36 SDK
         run: |
-          echo "ANDROID_HOME=${ANDROID_HOME}"
           SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f | sort -V | tail -1)"
-          if [ -z "$SDKMANAGER" ]; then echo "Android sdkmanager not found"; exit 1; fi
+          test -n "$SDKMANAGER"
           "$SDKMANAGER" --install "platforms;android-36" "build-tools;36.0.0"
       - uses: gradle/actions/setup-gradle@v4
         with:
@@ -48,6 +47,6 @@ jobs:
         run: gradle --no-daemon :watchface:assembleDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: you-are-free-debug-apk
+          name: pipboy-red-aod-debug-apk
           path: watchface/build/outputs/apk/debug/*.apk
           if-no-files-found: error
