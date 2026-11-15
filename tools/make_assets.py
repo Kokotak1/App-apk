@@ -4,7 +4,7 @@ from pathlib import Path
 from io import BytesIO
 from math import radians, sin, cos
 import base64
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "watchface/src/main/res/drawable"
@@ -72,6 +72,9 @@ for i in range(5):
     x=109+i*13
     frame.rectangle((x,253,x+10,263),fill="#10371d")
 
+# ECO: reduce OLED brightness of the full-screen illustration by 23% while
+# keeping the overlay data (service count, battery and date) at full clarity.
+art = ImageEnhance.Brightness(art).enhance(0.77)
 art.save(OUT / "background.png", optimize=True)
 
 # Always-on display: dark background with sparse neutral markings.
