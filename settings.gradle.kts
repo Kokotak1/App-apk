@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "YouAreFreeWatchFace"
-include(":watchface")
+include(":watchface", ":countdown")
