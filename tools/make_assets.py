@@ -41,6 +41,20 @@ art = art.transform(
     fillcolor=(0, 0, 0),
 )
 
+# Metallic lock under the noon marker, as in the approved Pip-Boy mockup.
+# Keep the circular dial, hands, counter and Vault Boy unchanged.
+deco = ImageDraw.Draw(art)
+deco.rounded_rectangle((196,32,256,80),radius=7,fill="#07100b")
+deco.arc((214,39,237,63),start=180,end=360,fill="#d5e0dd",width=5)
+deco.rounded_rectangle((210,52,241,76),radius=5,fill="#c4d5d3",outline="#e6f6f1",width=2)
+deco.ellipse((222,59,230,67),fill="#162620")
+deco.rectangle((225,63,227,72),fill="#162620")
+
+# Small yellow 'tap' cue on the right side of the red service counter.
+deco.arc((225,151,240,169),start=195,end=515,fill="#f9bd20",width=2)
+deco.arc((220,148,245,174),start=215,end=510,fill="#f9bd20",width=2)
+deco.line([(232,162),(232,183),(224,175)],fill="#ffd540",width=2)
+
 # Neon battery terminal, like the accepted concept art: a polished industrial
 # enclosure framing genuinely dynamic WFF battery segments and percent text.
 frame = ImageDraw.Draw(art)
