@@ -45,14 +45,38 @@ back.save(OUT / "background.png")
 
 
 def hand(name, w, h, base, tip, color):
-    im = Image.new("RGBA", (w * 3, h * 3), (0, 0, 0, 0))
+    """Draw a fully extended hand inside its actual WFF image bounds.
+
+    The clock's pivot is at base/h, and the blade stretches from the pivot
+    to the tip. Oversample for anti-aliased diagonal edges.
+    """
+    z = 4
+    im = Image.new("RGBA", (w * z, h * z), (0, 0, 0, 0))
     draw = ImageDraw.Draw(im)
-    cx = im.width // 2
-    # Polygon's upper point is toward 12; large bottom portion anchors it.
-    draw.polygon([(cx, 4), (cx + w, h), (cx + w // 2, base),
-                  (cx - w // 2, base), (cx - w, h)],
-                 fill=color)
-    draw.line([(cx, 15), (cx, base - 5)], fill=GREEN, width=max(3, w // 2))
+    def point(x, y):
+        return (round(x*z), round(y*z))
+    x = w/2
+    if name == "second":
+        draw.line([point(x, 4), point(x, h-2)], fill=GREEN, width=round(w*.40*z))
+        draw.ellipse([point(x-3,base-3),point(x+3,base+3)], fill=SOFT)
+    else:
+        # Metallic arrow, green inset, narrow tail behind center pivot.
+        contour = [
+            point(x, 3),
+            point(x+w*.12, 8),
+            point(x+w*.33, base*.65),
+            point(x+w*.33, base+5),
+            point(x+w*.14, h-3),
+            point(x-w*.14, h-3),
+            point(x-w*.33, base+5),
+            point(x-w*.33, base*.65),
+            point(x-w*.12, 8),
+        ]
+        draw.polygon(contour, fill=color)
+        draw.line([point(x, 12), point(x, base-11)],
+                  fill=GREEN, width=round(max(3, w*.14)*z))
+        draw.line([point(x-w*.33,base*.67), point(x-w*.33,base+5)],
+                  fill=(150,157,165,255), width=max(1,z//2))
     im.resize((w, h), Image.Resampling.LANCZOS).save(OUT / f"{name}.png")
 
 hand("hour", 40, 100, 80, 0, (201, 209, 218, 255))
@@ -64,11 +88,25 @@ dc.ellipse((2, 2, 38, 38), fill=(22, 25, 28, 255), outline=GREEN, width=5)
 dc.ellipse((16, 16, 24, 24), fill=SOFT)
 center.resize((20, 20), Image.Resampling.LANCZOS).save(OUT / "center.png")
 
-# Preview, distinct from live runtime: label, initial count, date, static hands.
+# Preview is a static 10:10 example, with the same hands used at runtime.
 prev = back.copy()
 p = ImageDraw.Draw(prev)
 p.text((S/2, 288), "ZBÝVÁ", font=font(47), fill=SOFT, anchor="mm")
 p.text((S/2, 384), "80", font=font(143), fill=GREEN, anchor="mm")
 p.text((S/2, 664), "15.11.2026", font=font(53, False), fill=SOFT, anchor="mm")
-prev.resize((450, 450), Image.Resampling.LANCZOS).save(OUT / "preview.png")
+thumb = prev.resize((450, 450), Image.Resampling.LANCZOS)
+
+def add_preview_hand(name, clockwise_angle, pivot_y):
+    img = Image.open(OUT / f"{name}.png").convert("RGBA")
+    w, h = img.size
+    lay = Image.new("RGBA", (450,450), (0,0,0,0))
+    lay.alpha_composite(img, (round(225-w/2), round(225-h*pivot_y)))
+    lay = lay.rotate(-clockwise_angle, center=(225,225), resample=Image.Resampling.BICUBIC)
+    thumb.alpha_composite(lay)
+
+add_preview_hand("hour", 305, 0.8)
+add_preview_hand("minute", 60, 0.903)
+add_preview_hand("second", 210, 0.861)
+thumb.alpha_composite(Image.open(OUT / "center.png").convert("RGBA"), (215,215))
+thumb.save(OUT / "preview.png")
 print("Created:", ", ".join(p.name for p in OUT.glob("*.png")))
