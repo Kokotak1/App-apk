@@ -57,9 +57,10 @@ def hand(name, w, h, base, color, accent=None):
 
 # Long industrial hands: tips reach the outer dial markers.
 # Pivot positions below must stay exactly aligned with watchface.xml.
-# Active dial: hour ~150px, minute ~186px, second ~198px from hub.
+# Active dial: hour ~149px, minute ~166px, second ~198px from hub.
+# Minute tip stays well within the green index circle, with ~30px clearance.
 hand("hour",36,174,151,SILVER,(75,230,71,255))
-hand("minute",26,205,187,SILVER,(75,230,71,255))
+hand("minute",26,190,168,SILVER,(75,230,71,255))
 hand("second",8,218,200,GREEN)
 pivot=Image.new("RGBA",(20,20),(0,0,0,0))
 dc=ImageDraw.Draw(pivot)
