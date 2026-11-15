@@ -1,16 +1,20 @@
-# You Are Free – Pip-Boy RED / AOD
+# Pip-Boy RED 1.6 – Galaxy Watch 8 Classic
 
-Samostatná varianta ciferníku pro Samsung Galaxy Watch 8 Classic LTE.
+## Co je nového
+- Ciferník i všechny ručičky znovu vycentrované v souřadnicích (225, 225) – žádný posun celého obrázku doleva.
+- Na červeném počítadle zbývajících služeb (např. **80**) je proklik.
+- Klepnutí na číslo otevře samostatnou obrazovku **ZBÝVÁ HODIN** do **1. 10. 2027 v 00:00, Europe/Prague**, s hodinami, minutami a sekundami.
+- Hodinový odpočet je přesný i přes letní/zimní čas a funguje bez internetu.
+- AOD: tlumený ciferník s hodinovou a minutovou ručičkou, bez vteřinovky.
 
-- Schválené pozadí s Vault Boyem napravo, zeleným kruhem a červeným počítadlem zbývajících služeb.
-- Analogové hodiny s hodinovou, minutovou a zelenou vteřinovou ručičkou.
-- Živé datum v dolní kovové destičce; žádný údaj není napevno.
-- Always On Display: černý úsporný režim s hodinovou a minutovou ručičkou, tlumeným počítadlem a živým datem, ale **bez vteřinové ručičky**.
-- Od 18. 11. 2026 každé čtyři dny; počítadlo začíná na **80** a 1. 10. 2027 dosáhne **0**.
-- Android applicationId **cz.youarefree.pipboy**: lze instalovat vedle předchozí verze You Are Free.
+## Instalace – NUTNÉ DVĚ APK
+Watch Face Format od Wear OS nesmí obsahovat Java/Kotlin kód. Pro spolehlivý živý hodinový odpočet proto instalujte **obě** APK do **hodinek** (ne do telefonu):
 
-## Instalace
+1. `watchface-debug.apk` – nový ciferník, applicationId `cz.youarefree.pipboyred6`.
+2. `countdown-debug.apk` – aplikace hodinového odpočtu, applicationId `cz.youarefree.pipboy.countdown`.
 
-[GitHub Actions – větev Pip-Boy RED](https://github.com/Kokotak1/App-apk/actions?query=branch%3Apipboy-red-aod) → nejnovější úspěšný **Build Pip-Boy Watch Face APK** → **Artifacts** → `pipboy-red-aod-debug-apk` → rozbalit ZIP a pomocí Wear Installer 2 instalovat APK do hodinek.
+Stáhnout na [GitHub Actions](https://github.com/Kokotak1/App-apk/actions/workflows/build-apk.yml?query=branch%3Apipboy-red-aod) z nejnovějšího úspěšného běhu přes **Artifacts**, položka **pipboy-red-v1.6-two-apks-install-both**. ZIP obsahuje oba instalační soubory APK; rozbalit a instalovat přes Wear Installer 2. Po instalaci vybrat ciferník **Pip-Boy RED 1.6** a klepnout na červené číslo.
 
-**Důležité:** Tato samostatná větev zachovává původní ciferník na `main`. APK je testovací, bez podpisu pro publikování v Google Play.
+Použití z příkazové řádky: `adb install watchface-debug.apk` a `adb install countdown-debug.apk`.
+
+Poznámka: APK jsou debug sestavení pro osobní test, nejsou to produkční Google Play balíčky. Starší ciferník 1.5 zůstane dostupný jako samostatná aplikace.
