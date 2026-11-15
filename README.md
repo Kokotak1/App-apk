@@ -31,3 +31,12 @@ Poznámka: APK jsou debug sestavení pro osobní test, nejsou to produkční Goo
 - Odstraněna přidaná ikona zámku z pozice 12 na ciferníku; původní grafika ciferníku zůstává.
 - Červená 80, zelená baterie, den v týdnu, analogové ručičky, živé datum, AOD a proklik na hodinový odpočet zůstávají beze změny.
 - Ciferník má nové `applicationId` `cz.youarefree.pipboyred8`, aby se dal nainstalovat vedle starého debug sestavení, bez konfliktu podpisu. Už nainstalovanou aplikaci hodinového odpočtu `cz.youarefree.pipboy.countdown7` není nutné instalovat znovu.
+
+
+## Verze 1.9 – odolnější AOD
+- AOD podklad je první, vždy viditelná vrstva; při běžném používání jej zakrývá plný barevný ciferník. Když přejde displej do ambientního režimu, barevný podklad zmizí, AOD vrstva ale zůstane.
+- Hodinová a minutová ručička jsou v AOD zachované; vteřinová ručička je vypnutá.
+- Baterie se počítá živě: 48 % znamená 2 z 5 segmentů (40 a 60 % jsou prahy pro druhý/třetí segment). Barevné segmenty se v AOD schovají kvůli spotřebě.
+- Ostatní vzhled a kliknutí na červenou 80 zachované.
+- AOD může být vypnuté operačním systémem, například když hodinky nejsou na ruce nebo se zapne úsporný režim; tuto situaci ciferník nemůže obejít.
+- Nové ID ciferníku `cz.youarefree.pipboyred9`; aplikace hodinového odpočtu zůstává `cz.youarefree.pipboy.countdown7`.
