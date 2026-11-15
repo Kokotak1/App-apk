@@ -2,13 +2,13 @@ plugins {
     id("com.android.application")
 }
 android {
-    namespace = "cz.youarefree.pipboy"
+    namespace = "cz.youarefree.pipboyred2"
     compileSdk = 36
     defaultConfig {
-        applicationId = "cz.youarefree.pipboy"
+        applicationId = "cz.youarefree.pipboyred2"
         minSdk = 33
         targetSdk = 36
-        versionCode = 3
+        versionCode = 1
         versionName = "1.2"
     }
     buildTypes {
