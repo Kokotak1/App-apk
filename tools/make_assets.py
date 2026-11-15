@@ -89,12 +89,7 @@ dc.ellipse((16, 16, 24, 24), fill=SOFT)
 center.resize((20, 20), Image.Resampling.LANCZOS).save(OUT / "center.png")
 
 # Preview is a static 10:10 example, with the same hands used at runtime.
-prev = back.copy()
-p = ImageDraw.Draw(prev)
-p.text((S/2, 288), "ZBÝVÁ", font=font(47), fill=SOFT, anchor="mm")
-p.text((S/2, 384), "80", font=font(143), fill=GREEN, anchor="mm")
-p.text((S/2, 664), "15.11.2026", font=font(53, False), fill=SOFT, anchor="mm")
-thumb = prev.resize((450, 450), Image.Resampling.LANCZOS)
+thumb = back.resize((450, 450), Image.Resampling.LANCZOS)
 
 def add_preview_hand(name, clockwise_angle, pivot_y):
     img = Image.open(OUT / f"{name}.png").convert("RGBA")
@@ -108,5 +103,12 @@ add_preview_hand("hour", 305, 0.8)
 add_preview_hand("minute", 60, 0.903)
 add_preview_hand("second", 210, 0.861)
 thumb.alpha_composite(Image.open(OUT / "center.png").convert("RGBA"), (215,215))
+# Keep the counter and single date readable even beneath crossed hands.
+overlay = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+p = ImageDraw.Draw(overlay)
+p.text((S/2, 288), "ZBÝVÁ", font=font(47), fill=SOFT, anchor="mm")
+p.text((S/2, 384), "80", font=font(143), fill=GREEN, anchor="mm")
+p.text((S/2, 664), "15.11.2026", font=font(53, False), fill=SOFT, anchor="mm")
+thumb.alpha_composite(overlay.resize((450,450), Image.Resampling.LANCZOS))
 thumb.save(OUT / "preview.png")
 print("Created:", ", ".join(p.name for p in OUT.glob("*.png")))

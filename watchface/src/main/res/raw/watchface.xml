@@ -7,6 +7,23 @@
             <Variant mode="AMBIENT" target="alpha" value="0" />
             <Image resource="background" />
         </PartImage>
+        <!-- Live analog hands and central pivot -->
+        <AnalogClock x="0" y="0" width="450" height="450">
+            <HourHand resource="hour" x="205" y="145" width="40" height="100" pivotX="0.5" pivotY="0.8">
+                <Variant mode="AMBIENT" target="alpha" value="0" />
+            </HourHand>
+            <MinuteHand resource="minute" x="213" y="104" width="24" height="134" pivotX="0.5" pivotY="0.903">
+                <Variant mode="AMBIENT" target="alpha" value="0" />
+            </MinuteHand>
+            <SecondHand resource="second" x="221" y="70" width="8" height="180" pivotX="0.5" pivotY="0.861">
+                <Variant mode="AMBIENT" target="alpha" value="0" />
+                <Sweep frequency="15" />
+            </SecondHand>
+        </AnalogClock>
+        <PartImage x="215" y="215" width="20" height="20">
+            <Variant mode="AMBIENT" target="alpha" value="0" />
+            <Image resource="center" />
+        </PartImage>
         <!-- Single label. No "SLUŽEB" suffix. -->
         <PartText x="85" y="120" width="280" height="39">
             <Variant mode="AMBIENT" target="alpha" value="0" />
@@ -29,23 +46,6 @@
                 </Font>
             </Text>
         </PartText>
-        <!-- Live analog hands and central pivot -->
-        <AnalogClock x="0" y="0" width="450" height="450">
-            <HourHand resource="hour" x="205" y="145" width="40" height="100" pivotX="0.5" pivotY="0.8">
-                <Variant mode="AMBIENT" target="alpha" value="0" />
-            </HourHand>
-            <MinuteHand resource="minute" x="213" y="104" width="24" height="134" pivotX="0.5" pivotY="0.903">
-                <Variant mode="AMBIENT" target="alpha" value="0" />
-            </MinuteHand>
-            <SecondHand resource="second" x="221" y="70" width="8" height="180" pivotX="0.5" pivotY="0.861">
-                <Variant mode="AMBIENT" target="alpha" value="0" />
-                <Sweep frequency="15" />
-            </SecondHand>
-        </AnalogClock>
-        <PartImage x="215" y="215" width="20" height="20">
-            <Variant mode="AMBIENT" target="alpha" value="0" />
-            <Image resource="center" />
-        </PartImage>
         <!-- Exactly one live date, at bottom of dial -->
         <PartText x="88" y="315" width="274" height="40">
             <Variant mode="AMBIENT" target="alpha" value="0" />
