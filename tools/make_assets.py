@@ -55,9 +55,12 @@ def hand(name, w, h, base, color, accent=None):
             draw.line((p(cx,13),p(cx,base-15)),fill=accent,width=max(3,int(w*.14*z)))
     im.resize((w,h), Image.Resampling.LANCZOS).save(OUT / (name+".png"))
 
-hand("hour",40,100,80,SILVER,(75,230,71,255))
-hand("minute",24,134,121,SILVER,(75,230,71,255))
-hand("second",8,180,155,GREEN)
+# Long industrial hands: tips reach the outer dial markers.
+# Pivot positions below must stay exactly aligned with watchface.xml.
+# Active dial: hour ~150px, minute ~186px, second ~198px from hub.
+hand("hour",36,174,151,SILVER,(75,230,71,255))
+hand("minute",26,205,187,SILVER,(75,230,71,255))
+hand("second",8,218,200,GREEN)
 pivot=Image.new("RGBA",(20,20),(0,0,0,0))
 dc=ImageDraw.Draw(pivot)
 dc.ellipse((1,1,19,19),fill=(120,128,133,255),outline=(223,231,236,255),width=3)

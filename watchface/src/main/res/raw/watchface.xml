@@ -14,9 +14,9 @@
     </PartImage>
 
     <AnalogClock x="0" y="0" width="450" height="450">
-      <HourHand resource="hour" x="205" y="145" width="40" height="100" pivotX="0.5" pivotY="0.8" />
-      <MinuteHand resource="minute" x="213" y="104" width="24" height="134" pivotX="0.5" pivotY="0.903" />
-      <SecondHand resource="second" x="221" y="70" width="8" height="180" pivotX="0.5" pivotY="0.861">
+      <HourHand resource="hour" x="207" y="74" width="36" height="174" pivotX="0.5" pivotY="0.867816" />
+      <MinuteHand resource="minute" x="212" y="38" width="26" height="205" pivotX="0.5" pivotY="0.912195" />
+      <SecondHand resource="second" x="221" y="25" width="8" height="218" pivotX="0.5" pivotY="0.917431">
         <Variant mode="AMBIENT" target="alpha" value="0" />
         <Sweep frequency="15" />
       </SecondHand>
