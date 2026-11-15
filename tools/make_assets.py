@@ -40,6 +40,31 @@ art = art.transform(
     resample=Image.Resampling.BICUBIC,
     fillcolor=(0, 0, 0),
 )
+
+# Neon battery terminal, like the accepted concept art: a polished industrial
+# enclosure framing genuinely dynamic WFF battery segments and percent text.
+frame = ImageDraw.Draw(art)
+for rect, outline, thick in [
+    ((82,213,206,305), "#22241b", 5),
+    ((87,217,202,300), "#83775b", 3),
+    ((92,221,197,295), "#35392f", 2),
+    ((96,225,193,291), "#14552d", 1),
+]:
+    frame.rounded_rectangle(rect, radius=8,
+                            fill="#051109" if rect[0] == 96 else None,
+                            outline=outline, width=thick)
+for x,y in ((91,221),(193,221),(91,297),(193,297)):
+    frame.ellipse((x-3,y-3,x+3,y+3),
+                  fill="#9b9887",outline="#201f1a")
+frame.text((145,235),"BATERIE",font=font(12,True),
+           fill="#39fa44",anchor="mm")
+frame.rounded_rectangle((106,250,179,266),radius=2,
+                        outline="#bcffcb",width=2)
+frame.rectangle((180,255,184,261),fill="#bcffcb")
+for i in range(5):
+    x=109+i*13
+    frame.rectangle((x,253,x+10,263),fill="#10371d")
+
 art.save(OUT / "background.png", optimize=True)
 
 # Always-on display: dark background with sparse neutral markings.
@@ -114,7 +139,7 @@ preview=art.copy()
 dp=ImageDraw.Draw(preview)
 dp.text((171,157),"80",font=font(70,True),fill=RED,anchor="mm",
         stroke_width=1,stroke_fill=(80,0,0))
-dp.text((222,319),"18.11.2026",font=font(21),fill=(245,245,245),anchor="mm")
+dp.text((225,319),"NE 18.11.2026",font=font(21),fill=(245,245,245),anchor="mm")
 # Simulated 14:15:30 preview: same images, angles and center as runtime.
 # Text is drawn afterward just as the live WFF text overlays the hands.
 for name, x, y, clockwise in [
@@ -133,6 +158,12 @@ preview.alpha_composite(Image.open(OUT / "center.png").convert("RGBA"),(217,217)
 dp=ImageDraw.Draw(preview)
 dp.text((162,157),"80",font=font(70,True),fill=RED,anchor="mm",
         stroke_width=1,stroke_fill=(80,0,0))
-dp.text((213,319),"18.11.2026",font=font(21),fill=(245,245,245),anchor="mm")
+dp.text((225,319),"NE 18.11.2026",font=font(21),fill=(245,245,245),anchor="mm")
+# Representative battery: four of five charge segments and 87%.
+dp=ImageDraw.Draw(preview)
+for i in range(4):
+    x=109+i*13
+    dp.rectangle((x,253,x+10,263),fill=(35,245,57,255))
+dp.text((146,280),"87%",font=font(19,True),fill=GREEN,anchor="mm")
 preview.save(OUT / "preview.png",optimize=True)
 print("Generated Pip-Boy background, AOD background, hands and preview")
