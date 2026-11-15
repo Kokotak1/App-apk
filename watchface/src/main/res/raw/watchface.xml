@@ -37,7 +37,7 @@
       </Text>
       <!-- This red number is the tappable hit area; the companion package
            is a separate APK because WFF itself must remain resource-only. -->
-      <Launch target="cz.youarefree.pipboy.countdown/cz.youarefree.pipboy.countdown.CountdownActivity" />
+      <Launch target="cz.youarefree.pipboy.countdown7/cz.youarefree.pipboy.countdown.CountdownActivity" />
     </PartText>
     <!-- Keep the same live count in AOD, less luminous to save power. -->
     <PartText x="85" y="131" width="280" height="85" alpha="0">
@@ -58,12 +58,61 @@
       </Text>
     </PartText>
 
-    <!-- Live calendar date in the empty lower metal plate. -->
+    <!-- Live, independently updated battery gauge in the Vault-Tec terminal.
+         Five inlaid green charge segments, with a numerical percentage. -->
+    <Condition>
+      <Expressions>
+        <Expression name="charge20"><![CDATA[[BATTERY_PERCENT] >= 20]]></Expression>
+      </Expressions>
+      <Compare expression="charge20">
+        <PartDraw x="109" y="253" width="10" height="11">
+          <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
+        </PartDraw>
+      </Compare>
+    </Condition>
+    <!-- Each threshold is a separate conditional, enabling a true charge gauge. -->
+    <Condition>
+      <Expressions><Expression name="c40"><![CDATA[[BATTERY_PERCENT] >= 40]]></Expression></Expressions>
+      <Compare expression="c40"><PartDraw x="122" y="253" width="10" height="11">
+        <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
+      </PartDraw></Compare>
+    </Condition>
+    <Condition>
+      <Expressions><Expression name="c60"><![CDATA[[BATTERY_PERCENT] >= 60]]></Expression></Expressions>
+      <Compare expression="c60"><PartDraw x="135" y="253" width="10" height="11">
+        <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
+      </PartDraw></Compare>
+    </Condition>
+    <Condition>
+      <Expressions><Expression name="c80"><![CDATA[[BATTERY_PERCENT] >= 80]]></Expression></Expressions>
+      <Compare expression="c80"><PartDraw x="148" y="253" width="10" height="11">
+        <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
+      </PartDraw></Compare>
+    </Condition>
+    <Condition>
+      <Expressions><Expression name="c100"><![CDATA[[BATTERY_PERCENT] >= 100]]></Expression></Expressions>
+      <Compare expression="c100"><PartDraw x="161" y="253" width="10" height="11">
+        <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
+      </PartDraw></Compare>
+    </Condition>
+    <PartText x="104" y="264" width="85" height="27">
+      <Variant mode="AMBIENT" target="alpha" value="0" />
+      <Text align="CENTER">
+        <Font family="SYNC_TO_DEVICE" size="21" weight="BOLD" color="#ff34f451">
+          <Template><![CDATA[%d%%]]>
+            <Parameter expression="[BATTERY_PERCENT]"/>
+          </Template>
+        </Font>
+      </Text>
+    </PartText>
+
+    <!-- Live calendar date in the empty lower metal plate, plus weekday. -->
     <PartText x="115" y="303" width="225" height="42">
       <Variant mode="AMBIENT" target="alpha" value="0" />
       <Text align="CENTER">
-        <Font family="SYNC_TO_DEVICE" size="23" color="#fff5f5f5">
-          <Template><![CDATA[%s.%s.%d]]>
+        <Font family="SYNC_TO_DEVICE" size="19" color="#fff5f5f5">
+          <Template><![CDATA[%s  %s.%s.%d]]>
+            <Parameter expression="[DAY_OF_WEEK_S]"/>
             <Parameter expression="[DAY_Z]"/>
             <Parameter expression="[MONTH_Z]"/>
             <Parameter expression="[YEAR]"/>
@@ -74,8 +123,9 @@
     <PartText x="108" y="294" width="235" height="44" alpha="0">
       <Variant mode="AMBIENT" target="alpha" value="255" />
       <Text align="CENTER">
-        <Font family="SYNC_TO_DEVICE" size="22" color="#ff999999">
-          <Template><![CDATA[%s.%s.%d]]>
+        <Font family="SYNC_TO_DEVICE" size="19" color="#ff999999">
+          <Template><![CDATA[%s  %s.%s.%d]]>
+            <Parameter expression="[DAY_OF_WEEK_S]"/>
             <Parameter expression="[DAY_Z]"/>
             <Parameter expression="[MONTH_Z]"/>
             <Parameter expression="[YEAR]"/>
