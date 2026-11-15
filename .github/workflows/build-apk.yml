@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/build-apk.yml"
       - "watchface/**"
+      - "countdown/**"
       - "tools/**"
       - "*.gradle.kts"
       - "gradle.properties"
@@ -43,10 +44,26 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.11.1"
-      - name: Compile debug APK
-        run: gradle --no-daemon :watchface:assembleDebug
+      - name: Compile watch face and hourly countdown companion APKs
+        run: gradle --no-daemon :watchface:assembleDebug :countdown:assembleDebug
+      - name: Check both APKs were generated
+        run: |
+          test -f watchface/build/outputs/apk/debug/watchface-debug.apk
+          test -f countdown/build/outputs/apk/debug/countdown-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: pipboy-red-aod-debug-apk
-          path: watchface/build/outputs/apk/debug/*.apk
+          name: pipboy-red-v1.6-two-apks-install-both
+          path: |
+            watchface/build/outputs/apk/debug/watchface-debug.apk
+            countdown/build/outputs/apk/debug/countdown-debug.apk
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pipboy-red-v1.6-watch-face-only
+          path: watchface/build/outputs/apk/debug/watchface-debug.apk
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pipboy-hourly-countdown-app-only
+          path: countdown/build/outputs/apk/debug/countdown-debug.apk
           if-no-files-found: error
