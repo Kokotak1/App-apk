@@ -20,12 +20,12 @@ def font(sz, bold=False):
 
 src = ROOT / "tools/pipboy_bg.b64"
 art = Image.open(BytesIO(base64.b64decode(src.read_text().strip()))).convert("RGB")
-# Calibrate the source artwork to the physical screen. The neon outer ring
-# was measured at (221.5, 219.0) in the source 450x450 image, whereas WFF
-# places the clock hands at (225, 225). Shift and enlarge the whole scene
-# together so the printed dial and rotating hands have a common center.
+# Photo calibration (15 Nov 2026): the green dial center was at x~422.5
+# but the physical bezel center at x~415 on the photographed watch.
+# Compensate with a left shift of 9 WFF units, applying the same correction
+# to dial artwork, AOD, all three hands, center cap, live count and date.
 SOURCE_CENTER = (221.5, 219.0)
-TARGET_CENTER = (S / 2, S / 2)
+TARGET_CENTER = (S / 2 - 9, S / 2)  # -9px x correction, measured from real watch photo
 DIAL_SCALE = 1.04  # leaves a small safety margin inside the round screen
 art = art.resize((S, S), Image.Resampling.LANCZOS)
 inverse_scale = 1.0 / DIAL_SCALE
@@ -49,107 +49,91 @@ d = ImageDraw.Draw(aod)
 for i in range(12):
     a = radians(i * 30 - 90)
     r1, r2 = (187, 203) if i % 3 == 0 else (194, 202)
-    x1, y1 = 225+r1*cos(a), 225+r1*sin(a)
-    x2, y2 = 225+r2*cos(a), 225+r2*sin(a)
+    x1, y1 = 216+r1*cos(a), 225+r1*sin(a)
+    x2, y2 = 216+r2*cos(a), 225+r2*sin(a)
     d.line((x1,y1,x2,y2), fill=(82,84,84,255) if i%3 == 0 else (46,49,49,255), width=3 if i%3 == 0 else 2)
-d.text((225, 82), "12", fill=(100,100,100,255), font=font(35, True), anchor="mm")
-d.text((391,225), "3", fill=(95,95,95,255), font=font(29,True), anchor="mm")
-d.text((225,384), "6", fill=(95,95,95,255), font=font(29,True), anchor="mm")
-d.text((60,225), "9", fill=(95,95,95,255), font=font(29,True), anchor="mm")
+d.text((216, 82), "12", fill=(100,100,100,255), font=font(35, True), anchor="mm")
+d.text((382,225), "3", fill=(95,95,95,255), font=font(29,True), anchor="mm")
+d.text((216,384), "6", fill=(95,95,95,255), font=font(29,True), anchor="mm")
+d.text((51,225), "9", fill=(95,95,95,255), font=font(29,True), anchor="mm")
 aod.save(OUT / "aod_background.png", optimize=True)
 
-def hand(name, w, h, base, color, accent=None):
-    """Oversampled industrial blades: sculpted silver edges and a wide neon inset."""
-    z = 6
-    im = Image.new("RGBA", (w*z, h*z), (0,0,0,0))
-    cx = w/2
-    def coords(points, dx=0, dy=0):
-        return [(round((x+dx)*z), round((y+dy)*z)) for x,y in points]
+def hand(name, w, h, base):
+    """Slim, elongated, tapered instrument hands; all pivots at x=216,y=225."""
+    z = 6  # antialias at 6x resolution
+    im = Image.new("RGBA", (w*z, h*z), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
+    cx = w / 2
+    def poly(points):
+        return [(round(x*z), round(y*z)) for x,y in points]
     if name == "second":
-        d.line(coords([(cx,5),(cx,h-5)]), fill=(5,36,8,245), width=round(4.6*z))
-        d.line(coords([(cx,5),(cx,h-5)]), fill=GREEN, width=round(2.9*z))
-        d.ellipse((round((cx-3.3)*z),round((base-3.3)*z),
-                   round((cx+3.3)*z),round((base+3.3)*z)),fill=SILVER)
+        d.line(poly([(cx,5),(cx,h-7)]),fill=(6,40,12,240),width=round(4*z))
+        d.line(poly([(cx,5),(cx,h-7)]),fill=(24,233,42,255),width=round(2*z))
     else:
-        # Sword-shaped silhouette. Unlike the previous 26px hand,
-        # the blade's actual width is roughly 60% of its image.
-        outline = [(cx,3),
-                   (cx+w*.115,16),
-                   (cx+w*.335,base*.37),
-                   (cx+w*.335,base*.78),
-                   (cx+w*.285,base+6),
-                   (cx+w*.10,h-4),
-                   (cx-w*.10,h-4),
-                   (cx-w*.285,base+6),
-                   (cx-w*.335,base*.78),
-                   (cx-w*.335,base*.37),
-                   (cx-w*.115,16)]
-        d.polygon(coords(outline,1.0,2.0),fill=(0,0,0,140))
-        d.polygon(coords(outline),fill=(25,31,33,255))
-        metal = [(cx,6),
-                 (cx+w*.105,18),
-                 (cx+w*.30,base*.39),
-                 (cx+w*.30,base*.77),
-                 (cx+w*.255,base+4),
-                 (cx+w*.075,h-7),
-                 (cx-w*.075,h-7),
-                 (cx-w*.255,base+4),
-                 (cx-w*.30,base*.77),
-                 (cx-w*.30,base*.39),
-                 (cx-w*.105,18)]
-        d.polygon(coords(metal),fill=(207,218,228,255))
-        # Raised polished edges and dark recessed central slot.
-        d.line(coords([(cx-w*.105,18),(cx-w*.30,base*.39),
-                       (cx-w*.30,base*.77),(cx-w*.255,base+4)]),
-               fill=(250,252,253,255),width=round(2.7*z),joint="curve")
-        d.line(coords([(cx+w*.105,18),(cx+w*.30,base*.39),
-                       (cx+w*.30,base*.77),(cx+w*.255,base+4)]),
-               fill=(91,103,117,255),width=round(2.5*z),joint="curve")
-        inset = [(cx,24),
-                 (cx+w*.07,29),
-                 (cx+w*.19,base*.43),
-                 (cx+w*.19,base*.73),
-                 (cx+w*.12,base-13),
-                 (cx-w*.12,base-13),
-                 (cx-w*.19,base*.73),
-                 (cx-w*.19,base*.43),
-                 (cx-w*.07,29)]
-        d.polygon(coords(inset),fill=(4,23,9,255))
-        glow = [(cx,28),
-                (cx+w*.055,33),
-                (cx+w*.155,base*.44),
-                (cx+w*.155,base*.70),
-                (cx+w*.10,base-17),
-                (cx-w*.10,base-17),
-                (cx-w*.155,base*.70),
-                (cx-w*.155,base*.44),
-                (cx-w*.055,33)]
-        d.polygon(coords(glow),fill=(32,236,44,255))
-        d.line(coords([(cx-w*.055,35),(cx-w*.14,base*.45),
-                       (cx-w*.14,base*.69)]), fill=(174,255,158,245),
-               width=round(1.8*z),joint="curve")
-        # Short gunmetal tail behind the pivot.
-        d.line(coords([(cx,base+8),(cx,h-8)]),
-               fill=(65,76,82,255), width=round(4*z))
-    im.resize((w,h), Image.Resampling.LANCZOS).save(OUT / (name+".png"))
+        # Thin sword profile, capped around 15-19 px wide at its widest.
+        outer=[
+            (cx,3), (cx+w*.09,12), (cx+w*.31,base*.54),
+            (cx+w*.28,base*.78), (cx+w*.19,base+5),
+            (cx+w*.11,h-5), (cx-w*.11,h-5),
+            (cx-w*.19,base+5), (cx-w*.28,base*.78),
+            (cx-w*.31,base*.54), (cx-w*.09,12)]
+        d.polygon(poly([(x+0.7,y+1.3) for x,y in outer]),fill=(0,0,0,130))
+        d.polygon(poly(outer),fill=(228,235,239,255))
+        # Narrow green central channel; the silver edge remains readable.
+        core=[
+            (cx,17), (cx+w*.052,22), (cx+w*.17,base*.55),
+            (cx+w*.13,base*.77), (cx+w*.07,base-8),
+            (cx-w*.07,base-8), (cx-w*.13,base*.77),
+            (cx-w*.17,base*.55), (cx-w*.052,22)]
+        d.polygon(poly(core),fill=(8,36,15,255))
+        glow=[
+            (cx,22), (cx+w*.036,27), (cx+w*.12,base*.56),
+            (cx+w*.095,base*.76), (cx+w*.035,base-12),
+            (cx-w*.035,base-12), (cx-w*.095,base*.76),
+            (cx-w*.12,base*.56), (cx-w*.036,27)]
+        d.polygon(poly(glow),fill=(25,236,45,255))
+        d.line(poly([(cx-w*.24,base*.58),(cx-w*.21,base*.77)]),
+               fill=(255,255,255,235),width=round(1.6*z))
+        # Only a short visible tail behind the central bearing.
+        d.line(poly([(cx,base+7),(cx,h-6)]),
+               fill=(101,113,119,255),width=round(2.8*z))
+    im.resize((w,h),Image.Resampling.LANCZOS).save(OUT / (name + ".png"))
 
-# Full metal blades, not the hairline hands from the previous APK.
-# The minute tip is 165px from center, safely inside the ~190px green ring.
-hand("hour",56,173,149,SILVER,GREEN)
-hand("minute",46,190,168,SILVER,GREEN)
-hand("second",8,218,200,GREEN)
-pivot=Image.new("RGBA",(20,20),(0,0,0,0))
+# Common mechanical pivot, left-shifted together with the photographed dial:
+# hour 75+150=225; minute 47+178=225; second 35+190=225.
+hand("hour",30,174,150)
+hand("minute",24,194,178)
+hand("second",6,213,190)
+pivot=Image.new("RGBA",(16,16),(0,0,0,0))
 dc=ImageDraw.Draw(pivot)
-dc.ellipse((1,1,19,19),fill=(120,128,133,255),outline=(223,231,236,255),width=3)
-dc.ellipse((8,8,12,12),fill=GREEN)
+dc.ellipse((1,1,15,15),fill=(123,134,140,255),outline=(235,243,246,255),width=2)
+dc.ellipse((6,6,10,10),fill=(32,235,44,255))
 pivot.save(OUT / "center.png")
 
 # Preview is illustrative; the WFF clock, count, and date remain live.
 preview=art.copy()
 dp=ImageDraw.Draw(preview)
-dp.text((171,157),"80",font=font(70,True),fill=RED,anchor="mm",
+dp.text((162,157),"80",font=font(70,True),fill=RED,anchor="mm",
         stroke_width=1,stroke_fill=(80,0,0))
-dp.text((222,319),"18.11.2026",font=font(21),fill=(245,245,245),anchor="mm")
+dp.text((213,319),"18.11.2026",font=font(21),fill=(245,245,245),anchor="mm")
+# Simulated 14:15:30 preview: same images, angles and center as runtime.
+# Text is drawn afterward just as the live WFF text overlays the hands.
+for name, x, y, clockwise in [
+    ("hour", 201, 75, 67.5),
+    ("minute", 204, 47, 90.0),
+    ("second", 213, 35, 180.0),
+]:
+    hand_img = Image.open(OUT / (name + ".png")).convert("RGBA")
+    layer = Image.new("RGBA",(S,S),(0,0,0,0))
+    layer.alpha_composite(hand_img,(x,y))
+    preview=Image.alpha_composite(
+        preview.convert("RGBA"),
+        layer.rotate(-clockwise,resample=Image.Resampling.BICUBIC,center=(216,225)))
+preview.alpha_composite(Image.open(OUT / "center.png").convert("RGBA"),(208,217))
+# Last: live counter + date, corresponding to the WFF layer order.
+dp=ImageDraw.Draw(preview)
+dp.text((162,157),"80",font=font(70,True),fill=RED,anchor="mm",
+        stroke_width=1,stroke_fill=(80,0,0))
+dp.text((213,319),"18.11.2026",font=font(21),fill=(245,245,245),anchor="mm")
 preview.save(OUT / "preview.png",optimize=True)
 print("Generated Pip-Boy background, AOD background, hands and preview")
