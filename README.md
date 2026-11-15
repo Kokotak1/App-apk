@@ -50,3 +50,11 @@ Poznámka: APK jsou debug sestavení pro osobní test, nejsou to produkční Goo
 - Baterie 48 % = 2/5 segmentů, živý údaj v procentech zůstává.
 - Pouze ciferník se nově instaluje jako `cz.youarefree.pipboyred20`; odpočet `cz.youarefree.pipboy.countdown7` není třeba znovu instalovat.
 - Výsledná výdrž se liší podle jasu, zapnutí AOD, LTE, GPS, notifikací a dalších funkcí hodinek; úsporu je potřeba změřit na zařízení.
+
+## Verze 2.1 ECO – kontrolní varianta při nadměrném vybíjení
+- **Bez vteřinové ručičky:** hodinová i minutová ručička zůstává živá, nejsou nutné žádné sekundové tiky.
+- Ilustrace je o 23 % tmavší, aby aktivní OLED podklad spotřeboval méně energie; data včetně počítadla služeb zůstávají ostrá.
+- AOD grafická vrstva se při aktivním ciferníku nevykresluje (alpha=0). Uživateli, který má AOD úplně vypnuté, AOD sama o sobě vybíjení nezpůsobuje.
+- Zachovány: Vault Boy, červená živá 80 s proklikem, živé procento a segmenty baterie, den v týdnu, datum a samostatný hodinový odpočet.
+- Diagnostické srovnání výdrže: porovnat s originálním Samsung ciferníkem za stejných podmínek. Bez zařízení nelze prokázat, zda je příčinou právě ciferník.
+- Nová identita `cz.youarefree.pipboyred21eco` umožňuje paralelní instalaci s verzí 2.0; hodinový odpočet se neinstaluje znovu.
