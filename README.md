@@ -58,3 +58,11 @@ Poznámka: APK jsou debug sestavení pro osobní test, nejsou to produkční Goo
 - Zachovány: Vault Boy, červená živá 80 s proklikem, živé procento a segmenty baterie, den v týdnu, datum a samostatný hodinový odpočet.
 - Diagnostické srovnání výdrže: porovnat s originálním Samsung ciferníkem za stejných podmínek. Bez zařízení nelze prokázat, zda je příčinou právě ciferník.
 - Nová identita `cz.youarefree.pipboyred21eco` umožňuje paralelní instalaci s verzí 2.0; hodinový odpočet se neinstaluje znovu.
+
+## Verze 2.2 ECO – úsporná verze s vteřinovou ručičkou
+- **Vteřinová ručička je zpět**, ale místo plynulého 15Hz pohybu vykonává jeden krátký krok za sekundu (`Tick duration="0.05" strength="1.0"`).
+- V AOD je vteřinovka skrytá. Uživatel má AOD vypnuté.
+- Zachováno snížení jasu grafiky o 23 % oproti původnímu ciferníku a úsporné vrstvení z ECO 2.1.
+- Dynamické služby po čtyřech dnech, proklik na hodinový odpočet, baterie (48 % = 2/5 segmentů), datum, den v týdnu a hodinová i minutová ručička beze změny.
+- Aplikace odpočtu se **nemění**, stačí instalovat pouze nový ciferník `cz.youarefree.pipboyred22eco`.
+- Nelze zaručit úsporu výdrže bez měření na hodinkách; sekundová ručička vyžaduje obnovení displeje minimálně jednou za sekundu, když je ciferník aktivní.
