@@ -26,3 +26,8 @@ Poznámka: APK jsou debug sestavení pro osobní test, nejsou to produkční Goo
 - Podoba hodinových a minutových ručiček, AOD a termín 1. 10. 2027 zůstávají zachované.
 - Nové unikátní applicationIds pro oba balíčky kvůli kompatibilitě instalace debug APK bez konfliktu podpisů.
 - Toto sestavení zachovává styl předlohy. Foto-ilustrace není doslova rastrový podklad, protože čas, baterie a datum zůstávají živé.
+
+## Oprava 1.8: bez ikonky zámku
+- Odstraněna přidaná ikona zámku z pozice 12 na ciferníku; původní grafika ciferníku zůstává.
+- Červená 80, zelená baterie, den v týdnu, analogové ručičky, živé datum, AOD a proklik na hodinový odpočet zůstávají beze změny.
+- Ciferník má nové `applicationId` `cz.youarefree.pipboyred8`, aby se dal nainstalovat vedle starého debug sestavení, bez konfliktu podpisu. Už nainstalovanou aplikaci hodinového odpočtu `cz.youarefree.pipboy.countdown7` není nutné instalovat znovu.
