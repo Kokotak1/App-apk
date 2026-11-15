@@ -39,28 +39,85 @@ d.text((60,225), "9", fill=(95,95,95,255), font=font(29,True), anchor="mm")
 aod.save(OUT / "aod_background.png", optimize=True)
 
 def hand(name, w, h, base, color, accent=None):
-    z=4
-    im=Image.new("RGBA", (w*z,h*z),(0,0,0,0))
-    draw=ImageDraw.Draw(im)
-    p=lambda x,y:(round(x*z),round(y*z))
-    cx=w/2
-    if name=="second":
-        draw.line((p(cx,3),p(cx,h-3)),fill=GREEN,width=max(4,int(w*.4*z)))
+    """Oversampled industrial blades: sculpted silver edges and a wide neon inset."""
+    z = 6
+    im = Image.new("RGBA", (w*z, h*z), (0,0,0,0))
+    cx = w/2
+    def coords(points, dx=0, dy=0):
+        return [(round((x+dx)*z), round((y+dy)*z)) for x,y in points]
+    d = ImageDraw.Draw(im)
+    if name == "second":
+        d.line(coords([(cx,5),(cx,h-5)]), fill=(5,36,8,245), width=round(4.6*z))
+        d.line(coords([(cx,5),(cx,h-5)]), fill=GREEN, width=round(2.9*z))
+        d.ellipse((round((cx-3.3)*z),round((base-3.3)*z),
+                   round((cx+3.3)*z),round((base+3.3)*z)),fill=SILVER)
     else:
-        draw.polygon([p(cx,2),p(cx+w*.14,9),p(cx+w*.34,base*.69),
-                      p(cx+w*.34,base+4),p(cx+w*.12,h-3),
-                      p(cx-w*.12,h-3),p(cx-w*.34,base+4),
-                      p(cx-w*.34,base*.69),p(cx-w*.14,9)],fill=color)
-        if accent:
-            draw.line((p(cx,13),p(cx,base-15)),fill=accent,width=max(3,int(w*.14*z)))
+        # Sword-shaped silhouette. Unlike the previous 26px hand,
+        # the blade's actual width is roughly 60% of its image.
+        outline = [(cx,3),
+                   (cx+w*.115,16),
+                   (cx+w*.335,base*.37),
+                   (cx+w*.335,base*.78),
+                   (cx+w*.285,base+6),
+                   (cx+w*.10,h-4),
+                   (cx-w*.10,h-4),
+                   (cx-w*.285,base+6),
+                   (cx-w*.335,base*.78),
+                   (cx-w*.335,base*.37),
+                   (cx-w*.115,16)]
+        d.polygon(coords(outline,1.0,2.0),fill=(0,0,0,140))
+        d.polygon(coords(outline),fill=(25,31,33,255))
+        metal = [(cx,6),
+                 (cx+w*.105,18),
+                 (cx+w*.30,base*.39),
+                 (cx+w*.30,base*.77),
+                 (cx+w*.255,base+4),
+                 (cx+w*.075,h-7),
+                 (cx-w*.075,h-7),
+                 (cx-w*.255,base+4),
+                 (cx-w*.30,base*.77),
+                 (cx-w*.30,base*.39),
+                 (cx-w*.105,18)]
+        d.polygon(coords(metal),fill=(207,218,228,255))
+        # Raised polished edges and dark recessed central slot.
+        d.line(coords([(cx-w*.105,18),(cx-w*.30,base*.39),
+                       (cx-w*.30,base*.77),(cx-w*.255,base+4)]),
+               fill=(250,252,253,255),width=round(2.7*z),joint="curve")
+        d.line(coords([(cx+w*.105,18),(cx+w*.30,base*.39),
+                       (cx+w*.30,base*.77),(cx+w*.255,base+4)]),
+               fill=(91,103,117,255),width=round(2.5*z),joint="curve")
+        inset = [(cx,24),
+                 (cx+w*.07,29),
+                 (cx+w*.19,base*.43),
+                 (cx+w*.19,base*.73),
+                 (cx+w*.12,base-13),
+                 (cx-w*.12,base-13),
+                 (cx-w*.19,base*.73),
+                 (cx-w*.19,base*.43),
+                 (cx-w*.07,29)]
+        d.polygon(coords(inset),fill=(4,23,9,255))
+        glow = [(cx,28),
+                (cx+w*.055,33),
+                (cx+w*.155,base*.44),
+                (cx+w*.155,base*.70),
+                (cx+w*.10,base-17),
+                (cx-w*.10,base-17),
+                (cx-w*.155,base*.70),
+                (cx-w*.155,base*.44),
+                (cx-w*.055,33)]
+        d.polygon(coords(glow),fill=(32,236,44,255))
+        d.line(coords([(cx-w*.055,35),(cx-w*.14,base*.45),
+                       (cx-w*.14,base*.69)]), fill=(174,255,158,245),
+               width=round(1.8*z),joint="curve")
+        # Short gunmetal tail behind the pivot.
+        d.line(coords([(cx,base+8),(cx,h-8)]),
+               fill=(65,76,82,255), width=round(4*z))
     im.resize((w,h), Image.Resampling.LANCZOS).save(OUT / (name+".png"))
 
-# Long industrial hands: tips reach the outer dial markers.
-# Pivot positions below must stay exactly aligned with watchface.xml.
-# Active dial: hour ~149px, minute ~166px, second ~198px from hub.
-# Minute tip stays well within the green index circle, with ~30px clearance.
-hand("hour",36,174,151,SILVER,(75,230,71,255))
-hand("minute",26,190,168,SILVER,(75,230,71,255))
+# Full metal blades, not the hairline hands from the previous APK.
+# The minute tip is 165px from center, safely inside the ~190px green ring.
+hand("hour",56,173,149,SILVER,GREEN)
+hand("minute",46,190,168,SILVER,GREEN)
 hand("second",8,218,200,GREEN)
 pivot=Image.new("RGBA",(20,20),(0,0,0,0))
 dc=ImageDraw.Draw(pivot)
