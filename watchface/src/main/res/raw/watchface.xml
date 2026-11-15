@@ -2,15 +2,16 @@
 <WatchFace width="450" height="450">
   <Metadata key="CLOCK_TYPE" value="ANALOG" />
   <Scene backgroundColor="#ff000000">
-    <!-- The user's approved Pip-Boy / Vault Boy art, visible only while awake. -->
-    <PartImage x="0" y="0" width="450" height="450">
+    <!-- Persistent, pre-rendered dark AOD underlay. It is never alpha=0:
+         when the bright face is hidden in ambient, the low-power markings
+         remain available without requiring another element to fade in. -->
+    <PartImage x="0" y="0" width="450" height="450" alpha="255">
+      <Image resource="aod_background" />
+    </PartImage>
+    <!-- The full Pip-Boy dial covers the AOD underlay while awake only. -->
+    <PartImage x="0" y="0" width="450" height="450" alpha="255">
       <Variant mode="AMBIENT" target="alpha" value="0" />
       <Image resource="background" />
-    </PartImage>
-    <!-- Minimalist energy-saving AOD face, never superimposed on normal dial. -->
-    <PartImage x="0" y="0" width="450" height="450" alpha="0">
-      <Variant mode="AMBIENT" target="alpha" value="255" />
-      <Image resource="aod_background" />
     </PartImage>
 
     <AnalogClock x="0" y="0" width="450" height="450">
@@ -66,6 +67,7 @@
       </Expressions>
       <Compare expression="charge20">
         <PartDraw x="109" y="253" width="10" height="11">
+          <Variant mode="AMBIENT" target="alpha" value="0" />
           <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
         </PartDraw>
       </Compare>
@@ -74,25 +76,29 @@
     <Condition>
       <Expressions><Expression name="c40"><![CDATA[[BATTERY_PERCENT] >= 40]]></Expression></Expressions>
       <Compare expression="c40"><PartDraw x="122" y="253" width="10" height="11">
-        <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
+        <Variant mode="AMBIENT" target="alpha" value="0" />
+          <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
       </PartDraw></Compare>
     </Condition>
     <Condition>
       <Expressions><Expression name="c60"><![CDATA[[BATTERY_PERCENT] >= 60]]></Expression></Expressions>
       <Compare expression="c60"><PartDraw x="135" y="253" width="10" height="11">
-        <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
+        <Variant mode="AMBIENT" target="alpha" value="0" />
+          <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
       </PartDraw></Compare>
     </Condition>
     <Condition>
       <Expressions><Expression name="c80"><![CDATA[[BATTERY_PERCENT] >= 80]]></Expression></Expressions>
       <Compare expression="c80"><PartDraw x="148" y="253" width="10" height="11">
-        <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
+        <Variant mode="AMBIENT" target="alpha" value="0" />
+          <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
       </PartDraw></Compare>
     </Condition>
     <Condition>
       <Expressions><Expression name="c100"><![CDATA[[BATTERY_PERCENT] >= 100]]></Expression></Expressions>
       <Compare expression="c100"><PartDraw x="161" y="253" width="10" height="11">
-        <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
+        <Variant mode="AMBIENT" target="alpha" value="0" />
+          <Rectangle x="0" y="0" width="10" height="11"><Fill color="#ff27ec40" /></Rectangle>
       </PartDraw></Compare>
     </Condition>
     <PartText x="104" y="264" width="85" height="27">
