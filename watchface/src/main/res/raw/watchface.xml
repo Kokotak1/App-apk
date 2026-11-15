@@ -14,19 +14,19 @@
     </PartImage>
 
     <AnalogClock x="0" y="0" width="450" height="450">
-      <HourHand resource="hour" x="197" y="76" width="56" height="173" pivotX="0.5" pivotY="0.861272" />
-      <MinuteHand resource="minute" x="202" y="57" width="46" height="190" pivotX="0.5" pivotY="0.884211" />
-      <SecondHand resource="second" x="221" y="25" width="8" height="218" pivotX="0.5" pivotY="0.917431">
+      <HourHand resource="hour" x="201" y="75" width="30" height="174" pivotX="0.5" pivotY="0.862069" />
+      <MinuteHand resource="minute" x="204" y="47" width="24" height="194" pivotX="0.5" pivotY="0.917526" />
+      <SecondHand resource="second" x="213" y="35" width="6" height="213" pivotX="0.5" pivotY="0.892019">
         <Variant mode="AMBIENT" target="alpha" value="0" />
         <Sweep frequency="15" />
       </SecondHand>
     </AnalogClock>
-    <PartImage x="215" y="215" width="20" height="20">
+    <PartImage x="208" y="217" width="16" height="16">
       <Image resource="center" />
     </PartImage>
 
     <!-- Live service counter in the empty red terminal on the left. -->
-    <PartText x="89" y="122" width="167" height="87">
+    <PartText x="80" y="122" width="167" height="87">
       <Variant mode="AMBIENT" target="alpha" value="0" />
       <Text align="CENTER">
         <Font family="SYNC_TO_DEVICE" size="76" weight="BOLD" color="#ffff1919">
@@ -37,7 +37,7 @@
       </Text>
     </PartText>
     <!-- Keep the same live count in AOD, less luminous to save power. -->
-    <PartText x="85" y="131" width="280" height="85" alpha="0">
+    <PartText x="76" y="131" width="280" height="85" alpha="0">
       <Variant mode="AMBIENT" target="alpha" value="255" />
       <Text align="CENTER">
         <Font family="SYNC_TO_DEVICE" size="70" weight="BOLD" color="#ff993434">
@@ -48,7 +48,7 @@
       </Text>
     </PartText>
     <!-- Ambient label, as awake label is already part of background bitmap. -->
-    <PartText x="110" y="97" width="230" height="38" alpha="0">
+    <PartText x="101" y="97" width="230" height="38" alpha="0">
       <Variant mode="AMBIENT" target="alpha" value="255" />
       <Text align="CENTER">
         <Font family="SYNC_TO_DEVICE" size="24" color="#ff999999"><![CDATA[ZBÝVÁ]]></Font>
@@ -56,7 +56,7 @@
     </PartText>
 
     <!-- Live calendar date in the empty lower metal plate. -->
-    <PartText x="115" y="303" width="225" height="42">
+    <PartText x="106" y="303" width="225" height="42">
       <Variant mode="AMBIENT" target="alpha" value="0" />
       <Text align="CENTER">
         <Font family="SYNC_TO_DEVICE" size="23" color="#fff5f5f5">
@@ -68,7 +68,7 @@
         </Font>
       </Text>
     </PartText>
-    <PartText x="108" y="294" width="235" height="44" alpha="0">
+    <PartText x="99" y="294" width="235" height="44" alpha="0">
       <Variant mode="AMBIENT" target="alpha" value="255" />
       <Text align="CENTER">
         <Font family="SYNC_TO_DEVICE" size="22" color="#ff999999">
