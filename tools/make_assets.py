@@ -20,7 +20,27 @@ def font(sz, bold=False):
 
 src = ROOT / "tools/pipboy_bg.b64"
 art = Image.open(BytesIO(base64.b64decode(src.read_text().strip()))).convert("RGB")
+# Calibrate the source artwork to the physical screen. The neon outer ring
+# was measured at (221.5, 219.0) in the source 450x450 image, whereas WFF
+# places the clock hands at (225, 225). Shift and enlarge the whole scene
+# together so the printed dial and rotating hands have a common center.
+SOURCE_CENTER = (221.5, 219.0)
+TARGET_CENTER = (S / 2, S / 2)
+DIAL_SCALE = 1.04  # leaves a small safety margin inside the round screen
 art = art.resize((S, S), Image.Resampling.LANCZOS)
+inverse_scale = 1.0 / DIAL_SCALE
+art = art.transform(
+    (S, S),
+    Image.Transform.AFFINE,
+    (
+        inverse_scale, 0,
+        SOURCE_CENTER[0] - TARGET_CENTER[0] * inverse_scale,
+        0, inverse_scale,
+        SOURCE_CENTER[1] - TARGET_CENTER[1] * inverse_scale,
+    ),
+    resample=Image.Resampling.BICUBIC,
+    fillcolor=(0, 0, 0),
+)
 art.save(OUT / "background.png", optimize=True)
 
 # Always-on display: dark background with sparse neutral markings.
