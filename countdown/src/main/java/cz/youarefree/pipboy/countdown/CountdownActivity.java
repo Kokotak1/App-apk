@@ -20,13 +20,13 @@ import java.util.Locale;
 
 /**
  * Tappable companion for Pip-Boy RED.
- * Counts down to the first instant of 1 October 2027 in the Prague time zone.
+ * Counts down to the first instant of 1 August 2027 in the Prague time zone.
  * Works entirely offline, including across daylight-saving changes.
  */
 public final class CountdownActivity extends Activity {
     private static final ZoneId PRAGUE = ZoneId.of("Europe/Prague");
     private static final Instant DEADLINE =
-            LocalDate.of(2027, 10, 1).atStartOfDay(PRAGUE).toInstant();
+            LocalDate.of(2027, 8, 1).atStartOfDay(PRAGUE).toInstant();
     private static final int GREEN = Color.rgb(38, 236, 67);
     private static final int MUTED_GREEN = Color.rgb(137, 188, 142);
     private static final int RED = Color.rgb(255, 45, 45);
@@ -63,7 +63,7 @@ public final class CountdownActivity extends Activity {
         TextView badge = label("VAULT-TEC  •  ODPOČET", 12, MUTED_GREEN, Typeface.BOLD);
         root.addView(badge);
 
-        TextView heading = label("DO 1. 10. 2027", 23, Color.WHITE, Typeface.BOLD);
+        TextView heading = label("DO 1. 8. 2027", 23, Color.WHITE, Typeface.BOLD);
         root.addView(heading, withTop(9));
 
         remainingHours = label("—", 53, RED, Typeface.BOLD);
@@ -119,7 +119,7 @@ public final class CountdownActivity extends Activity {
         if (duration.isNegative() || duration.isZero()) {
             remainingHours.setText("0");
             remainingBreakdown.setText("CÍL DOSAŽEN");
-            remainingSeconds.setText("1. 10. 2027, 00:00");
+            remainingSeconds.setText("1. 8. 2027, 00:00");
             return;
         }
         long seconds = duration.getSeconds();
