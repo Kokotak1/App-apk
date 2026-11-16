@@ -32,13 +32,19 @@
       <Image resource="center" />
     </PartImage>
 
+    <!-- Remaining completed-duty decrements until 2027-08-01 00:00 Prague local time.
+         The event sequence is 2026-11-19 07:00, 2026-11-23 07:00,
+         2026-11-27 07:00, ... , 2027-07-29 07:00 (64 events).
+         DAYS_IN_2026 = 365; Nov 19 is day-of-year 323.
+         From Jan 1 2027, the shifted day serial is 42 + DAY_OF_YEAR.
+         Use HOUR_0_23 so the decrement occurs at 07:00, not midnight. -->
     <!-- Live service counter in the empty red terminal on the left. -->
     <PartText x="89" y="122" width="167" height="87">
       <Variant mode="AMBIENT" target="alpha" value="0" />
       <Text align="CENTER">
         <Font family="SYNC_TO_DEVICE" size="76" weight="BOLD" color="#ffff1919">
           <Template><![CDATA[%d]]>
-            <Parameter expression="round([YEAR] &lt; 2026 ? 80 : ([YEAR] &gt; 2027 ? 0 : clamp(80 - floor((([YEAR] == 2026 ? [DAY_OF_YEAR] - 322 : 43 + [DAY_OF_YEAR]) + 3) / 4), 0, 80)))"/>
+            <Parameter expression="round([YEAR] &lt; 2026 ? 64 : ([YEAR] &gt; 2027 ? 0 : clamp(64 - floor((([YEAR] == 2026 ? [DAY_OF_YEAR] - 323 : 42 + [DAY_OF_YEAR]) + ([HOUR_0_23] &gt;= 7 ? 4 : 3)) / 4), 0, 64)))"/>
           </Template>
         </Font>
       </Text>
@@ -52,7 +58,7 @@
       <Text align="CENTER">
         <Font family="SYNC_TO_DEVICE" size="70" weight="BOLD" color="#ff993434">
           <Template><![CDATA[%d]]>
-            <Parameter expression="round([YEAR] &lt; 2026 ? 80 : ([YEAR] &gt; 2027 ? 0 : clamp(80 - floor((([YEAR] == 2026 ? [DAY_OF_YEAR] - 322 : 43 + [DAY_OF_YEAR]) + 3) / 4), 0, 80)))"/>
+            <Parameter expression="round([YEAR] &lt; 2026 ? 64 : ([YEAR] &gt; 2027 ? 0 : clamp(64 - floor((([YEAR] == 2026 ? [DAY_OF_YEAR] - 323 : 42 + [DAY_OF_YEAR]) + ([HOUR_0_23] &gt;= 7 ? 4 : 3)) / 4), 0, 64)))"/>
           </Template>
         </Font>
       </Text>
