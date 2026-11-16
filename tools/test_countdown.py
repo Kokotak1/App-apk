@@ -1,71 +1,62 @@
 #!/usr/bin/env python3
-"""Regression tests for 4-day work-duty completion at 07:00 local time."""
+"""Duty counter: switch to FREE after Monday 2027-08-02 at 07:00."""
 from datetime import datetime, timedelta
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-FIRST = datetime(2026, 11, 19, 7, 0)
-END = datetime(2027, 8, 1, 0, 0)
+FIRST = datetime(2026, 11, 19, 7)
+LAST = datetime(2027, 8, 2, 7)
 EVENTS = []
 t = FIRST
-while t < END:
+while t <= LAST:
     EVENTS.append(t)
     t += timedelta(days=4)
-assert len(EVENTS) == 64, len(EVENTS)
-assert EVENTS[-1] == datetime(2027, 7, 29, 7, 0)
-assert EVENTS[1] == datetime(2026, 11, 23, 7, 0)
-assert EVENTS[2] == datetime(2026, 11, 27, 7, 0)
+assert len(EVENTS) == 65 and EVENTS[-1] == LAST
 
+def oracle(now):
+    n = sum(event > now for event in EVENTS)
+    return str(n) if n else "FREE"
 
-def remaining_reference(now: datetime) -> int:
-    """Oracle: enumerate services already completed, independent of formula."""
-    return sum(t > now for t in EVENTS)
+def wff_mirror(now):
+    y, d, h = now.year, now.timetuple().tm_yday, now.hour
+    free = y > 2027 or (y == 2027 and (d > 214 or (d == 214 and h >= 7)))
+    if free: return "FREE"
+    if y < 2026: return "65"
+    days = d - 323 if y == 2026 else 42 + d
+    decrements = (days + (4 if h >= 7 else 3)) // 4
+    return str(max(0, min(65, 65 - decrements)))
 
-
-def remaining_wff_formula(now: datetime) -> int:
-    """Mirror WFF date-plus-clock expression, including New Year's rollover."""
-    year = now.year
-    if year < 2026:
-        return 64
-    if year > 2027:
-        return 0
-    day_serial = (now.timetuple().tm_yday - 323) if year == 2026 else (42 + now.timetuple().tm_yday)
-    completed = (day_serial + (4 if now.hour >= 7 else 3)) // 4
-    return max(0, min(64, 64 - completed))
-
-
-# Check all hours of every day throughout the two target years.
-now = datetime(2026, 1, 1)
-while now < datetime(2028, 1, 1):
+day = datetime(2026, 1, 1)
+while day < datetime(2028, 1, 1):
     for hour in range(24):
-        x = now.replace(hour=hour)
-        assert remaining_wff_formula(x) == remaining_reference(x), (x, remaining_wff_formula(x), remaining_reference(x))
-    now += timedelta(days=1)
-
+        t = day.replace(hour=hour)
+        assert wff_mirror(t) == oracle(t), (t, wff_mirror(t), oracle(t))
+    day += timedelta(days=1)
 for t in EVENTS:
     before = t - timedelta(minutes=1)
-    assert remaining_wff_formula(before) == remaining_reference(before)
-    assert remaining_wff_formula(t) == remaining_reference(t)
-    assert remaining_wff_formula(t) == remaining_wff_formula(before) - 1
+    assert wff_mirror(before) == oracle(before)
+    assert wff_mirror(t) == oracle(t)
+for t,v in [
+    (datetime(2026,11,16,19),"65"),
+    (datetime(2026,11,19,6,59),"65"),
+    (datetime(2026,11,19,7),"64"),
+    (datetime(2026,11,23,7),"63"),
+    (datetime(2026,11,27,7),"62"),
+    (datetime(2027,7,29,7),"1"),
+    (datetime(2027,8,1,23,59),"1"),
+    (datetime(2027,8,2,6,59),"1"),
+    (datetime(2027,8,2,7),"FREE")
+]:
+    assert oracle(t) == v, (t,oracle(t),v)
 
-assert remaining_wff_formula(datetime(2026, 11, 16, 19)) == 64
-assert remaining_wff_formula(datetime(2026, 11, 19, 6, 59)) == 64
-assert remaining_wff_formula(datetime(2026, 11, 19, 7, 0)) == 63
-assert remaining_wff_formula(datetime(2026, 11, 23, 7)) == 62
-assert remaining_wff_formula(datetime(2027, 7, 29, 6, 59)) == 1
-assert remaining_wff_formula(datetime(2027, 7, 29, 7)) == 0
-assert remaining_wff_formula(END) == 0
-
-# Prevent regressions where the actual watch face uses a different formula.
-face = ET.parse(Path(__file__).resolve().parents[1] / "watchface/src/main/res/raw/watchface.xml")
-counter_exprs = [
-    node.attrib["expression"]
-    for node in face.iter("Parameter")
-    if "[DAY_OF_YEAR]" in node.attrib.get("expression", "")
-]
-assert len(counter_exprs) == 2, counter_exprs
-assert counter_exprs[0] == counter_exprs[1]
-for piece in ("[HOUR_0_23]", "[DAY_OF_YEAR] - 323", "42 + [DAY_OF_YEAR]", "64 - floor"):
-    assert piece in counter_exprs[0], (piece, counter_exprs[0])
-
-print("OK: 64 duty decrements, first 2026-11-19 07:00, last 2027-07-29 07:00")
+root=ET.parse(Path(__file__).resolve().parents[1] / "watchface/src/main/res/raw/watchface.xml")
+count_params=[n.attrib["expression"] for n in root.iter("Parameter")
+              if "[DAY_OF_YEAR]" in n.attrib.get("expression", "")]
+assert len(count_params)==2 and count_params[0]==count_params[1]
+assert "65 - floor" in count_params[0]
+conditions=[(n.attrib.get("name"),(n.text or "").strip()) for n in root.iter("Expression")]
+free_conditions=[e for name,e in conditions if name in ("freeReachedActive","freeReachedAmbient")]
+assert len(free_conditions)==2 and free_conditions[0]==free_conditions[1]
+assert "[DAY_OF_YEAR] > 214" in free_conditions[0]
+assert sum(1 for n in root.iter("Font") if (n.text or "").strip()=="FREE")==2
+print("OK: 65 service completions at 07:00 every 4 days; FREE after 2027-08-02 07:00")
