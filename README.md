@@ -72,3 +72,13 @@ Poznámka: APK jsou debug sestavení pro osobní test, nejsou to produkční Goo
 - Aktualizuje hodiny, minuty a sekundy pouze při otevřené obrazovce; v pozadí nemá naplánovanou periodickou úlohu.
 - Grafika ciferníku a červené počítadlo služeb **nejsou změněny**; počítadlo služeb nadále používá dosavadní cyklus.
 - Instalace nového debug APK se stejným ID může vyžadovat nejprve odinstalovat starou aplikaci odpočtu kvůli rozdílnému podpisovému certifikátu. Ciferník není třeba odinstalovat.
+
+
+## Pip-Boy RED 2.3 ECO – správný čtyřdenní rytmus v 07:00
+- Uživatelské upřesnění: po čtvrtku 19. 11. 2026 následuje **pondělí 23. 11. 2026**, potom **pátek 27. 11. 2026** a každý další **čtvrtý kalendářní den, v 07:00 ráno**.
+- Mezi současností a 1. 8. 2027 v 00:00 (český čas) je **64 odečtů**. Červený údaj má před prvním odečtem 64; 19. 11. v 07:00 klesne na 63; poslední odečet 29. 7. 2027 v 07:00 dává nulu.
+- WFF výraz počítá dny přes přechod 2026/2027 a používá i `[HOUR_0_23]`, takže odečet není o půlnoci. Obě varianty počítadla (aktivní + ambient) jsou konzistentní.
+- Přidaný regresní test zahrnuje každou hodinu roku 2026 a 2027, hranice všech 64 odečtů a obě skutečné WFF definice.
+- Zachována vteřinová ručička (krátký tik po sekundě), baterie, datum, dotykové otevření samostatného hodinového odpočtu.
+- Hodinový odpočet do **1. 8. 2027** zůstává samostatnou aplikací, kterou lze aktualizovat bez změny ciferníku. Pro časový rozvrh na ciferníku se používá místní časové pásmo hodinek; při cestování mimo ČR se místní 07:00 může lišit od 07:00 v Praze.
+- Nový ciferník má applicationId `cz.youarefree.pipboyred23eco` a instaluje se vedle 2.2 ECO.
