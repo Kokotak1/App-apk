@@ -38,31 +38,62 @@
          DAYS_IN_2026 = 365; Nov 19 is day-of-year 323.
          From Jan 1 2027, the shifted day serial is 42 + DAY_OF_YEAR.
          Use HOUR_0_23 so the decrement occurs at 07:00, not midnight. -->
-    <!-- Live service counter in the empty red terminal on the left. -->
-    <PartText x="89" y="122" width="167" height="87">
-      <Variant mode="AMBIENT" target="alpha" value="0" />
-      <Text align="CENTER">
-        <Font family="SYNC_TO_DEVICE" size="76" weight="BOLD" color="#ffff1919">
-          <Template><![CDATA[%d]]>
-            <Parameter expression="round([YEAR] &lt; 2026 ? 64 : ([YEAR] &gt; 2027 ? 0 : clamp(64 - floor((([YEAR] == 2026 ? [DAY_OF_YEAR] - 323 : 42 + [DAY_OF_YEAR]) + ([HOUR_0_23] &gt;= 7 ? 4 : 3)) / 4), 0, 64)))"/>
-          </Template>
-        </Font>
-      </Text>
-      <!-- This red number is the tappable hit area; the companion package
-           is a separate APK because WFF itself must remain resource-only. -->
-      <Launch target="cz.youarefree.pipboy.countdown7/cz.youarefree.pipboy.countdown.CountdownActivity" />
-    </PartText>
-    <!-- Keep the same live count in AOD, less luminous to save power. -->
-    <PartText x="85" y="131" width="280" height="85" alpha="0">
-      <Variant mode="AMBIENT" target="alpha" value="255" />
-      <Text align="CENTER">
-        <Font family="SYNC_TO_DEVICE" size="70" weight="BOLD" color="#ff993434">
-          <Template><![CDATA[%d]]>
-            <Parameter expression="round([YEAR] &lt; 2026 ? 64 : ([YEAR] &gt; 2027 ? 0 : clamp(64 - floor((([YEAR] == 2026 ? [DAY_OF_YEAR] - 323 : 42 + [DAY_OF_YEAR]) + ([HOUR_0_23] &gt;= 7 ? 4 : 3)) / 4), 0, 64)))"/>
-          </Template>
-        </Font>
-      </Text>
-    </PartText>
+    <!-- 65 duty completions every four days at 07:00; FREE after
+         Mon 2027-08-02 07:00 (first August duty). No visible zero. -->
+    <Condition>
+      <Expressions>
+        <Expression name="freeReachedActive"><![CDATA[[YEAR] > 2027 || ([YEAR] == 2027 && ([DAY_OF_YEAR] > 214 || ([DAY_OF_YEAR] == 214 && [HOUR_0_23] >= 7)))]]></Expression>
+      </Expressions>
+      <Compare expression="freeReachedActive">
+        <PartText x="79" y="131" width="193" height="87">
+          <Variant mode="AMBIENT" target="alpha" value="0" />
+          <Text align="CENTER">
+            <Font family="SYNC_TO_DEVICE" size="60" weight="BOLD" color="#ffff1919">FREE</Font>
+          </Text>
+          <Launch target="cz.youarefree.pipboy.countdown7/cz.youarefree.pipboy.countdown.CountdownActivity" />
+        </PartText>
+      </Compare>
+      <Default>
+        <PartText x="89" y="122" width="167" height="87">
+          <Variant mode="AMBIENT" target="alpha" value="0" />
+          <Text align="CENTER">
+            <Font family="SYNC_TO_DEVICE" size="76" weight="BOLD" color="#ffff1919">
+              <Template><![CDATA[%d]]>
+                <Parameter expression="round([YEAR] &lt; 2026 ? 65 : ([YEAR] &gt; 2027 ? 0 : clamp(65 - floor((([YEAR] == 2026 ? [DAY_OF_YEAR] - 323 : 42 + [DAY_OF_YEAR]) + ([HOUR_0_23] &gt;= 7 ? 4 : 3)) / 4), 0, 65)))"/>
+              </Template>
+            </Font>
+          </Text>
+          <Launch target="cz.youarefree.pipboy.countdown7/cz.youarefree.pipboy.countdown.CountdownActivity" />
+        </PartText>
+      </Default>
+    </Condition>
+
+    <!-- Same number / FREE switch in ambient mode. -->
+    <Condition>
+      <Expressions>
+        <Expression name="freeReachedAmbient"><![CDATA[[YEAR] > 2027 || ([YEAR] == 2027 && ([DAY_OF_YEAR] > 214 || ([DAY_OF_YEAR] == 214 && [HOUR_0_23] >= 7)))]]></Expression>
+      </Expressions>
+      <Compare expression="freeReachedAmbient">
+        <PartText x="85" y="132" width="280" height="85" alpha="0">
+          <Variant mode="AMBIENT" target="alpha" value="255" />
+          <Text align="CENTER">
+            <Font family="SYNC_TO_DEVICE" size="53" weight="BOLD" color="#ff993434">FREE</Font>
+          </Text>
+        </PartText>
+      </Compare>
+      <Default>
+        <PartText x="85" y="131" width="280" height="85" alpha="0">
+          <Variant mode="AMBIENT" target="alpha" value="255" />
+          <Text align="CENTER">
+            <Font family="SYNC_TO_DEVICE" size="70" weight="BOLD" color="#ff993434">
+              <Template><![CDATA[%d]]>
+                <Parameter expression="round([YEAR] &lt; 2026 ? 65 : ([YEAR] &gt; 2027 ? 0 : clamp(65 - floor((([YEAR] == 2026 ? [DAY_OF_YEAR] - 323 : 42 + [DAY_OF_YEAR]) + ([HOUR_0_23] &gt;= 7 ? 4 : 3)) / 4), 0, 65)))"/>
+              </Template>
+            </Font>
+          </Text>
+        </PartText>
+      </Default>
+    </Condition>
     <!-- Ambient label, as awake label is already part of background bitmap. -->
     <PartText x="110" y="97" width="230" height="38" alpha="0">
       <Variant mode="AMBIENT" target="alpha" value="255" />
