@@ -91,3 +91,10 @@ Poznámka: APK jsou debug sestavení pro osobní test, nejsou to produkční Goo
 - FREE a číslice přepíná WFF Condition podle systémového data a času; na pozadí neběží žádný časovač.
 - Proklik na samostatný hodinový odpočet zachován v obou stavech aktivního ciferníku. Odpočet nadále směřuje k **1. 8. 2027 00:00**.
 - Baterie, datum, vteřinovka tikající jednou za sekundu i ECO ztmavení zachovány.
+
+## Pip-Boy RED 2.5 ECO – čitelnější AOD, zachovaná výdrž
+- AOD vrstva je nadále oddělená a `alpha=0` v aktivním režimu, takže nepřidává světlý podklad ani překreslování do běžného ciferníku.
+- Zlepšena viditelnost AOD číslic a indexů (světlejší šedá, stále černé pozadí, malé procento rozsvícených pixelů).
+- Hodinová a minutová ručička mají **jen v AOD** zvýšenou průhlednost 235/255; vteřinovka je v AOD skrytá. Aktivní zobrazení, animace jednou za sekundu, stmavení o 23 %, datum, baterie, proklik na odpočet i cyklus služeb zůstávají stejné.
+- Červené číslo začíná 65; odpočet každé 4 dny v 07:00; **FREE od 2. 8. 2027 v 07:00**, po první srpnové službě.
+- DŮLEŽITÉ: AOD musí uživatel zapnout v systému Galaxy Watch. Pokud je v nastavení vypnuté (nebo je aktivní úspora energie / režim spánku), nemůže jej APK nuceně zapnout. Ověření funkce AOD vyžaduje reálné hodinky.
