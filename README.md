@@ -82,3 +82,12 @@ Poznámka: APK jsou debug sestavení pro osobní test, nejsou to produkční Goo
 - Zachována vteřinová ručička (krátký tik po sekundě), baterie, datum, dotykové otevření samostatného hodinového odpočtu.
 - Hodinový odpočet do **1. 8. 2027** zůstává samostatnou aplikací, kterou lze aktualizovat bez změny ciferníku. Pro časový rozvrh na ciferníku se používá místní časové pásmo hodinek; při cestování mimo ČR se místní 07:00 může lišit od 07:00 v Praze.
 - Nový ciferník má applicationId `cz.youarefree.pipboyred23eco` a instaluje se vedle 2.2 ECO.
+
+
+## Pip-Boy RED 2.4 ECO – FREE až po první srpnové službě
+- Výchozí počet **65**: první odečet po dokončené službě ve čtvrtek **19. 11. 2026 07:00** (65→64), další pondělí 23. 11. (64→63), pátek 27. 11. (63→62), vždy po 4 dnech.
+- **29. 7. 2027 v 07:00** zůstává **1** poslední služba.
+- **2. 8. 2027 v 07:00** po první srpnové službě zmizí číslo a zobrazí se **FREE**, nikoli 0. Platí i pro ambientní ciferník.
+- FREE a číslice přepíná WFF Condition podle systémového data a času; na pozadí neběží žádný časovač.
+- Proklik na samostatný hodinový odpočet zachován v obou stavech aktivního ciferníku. Odpočet nadále směřuje k **1. 8. 2027 00:00**.
+- Baterie, datum, vteřinovka tikající jednou za sekundu i ECO ztmavení zachovány.
