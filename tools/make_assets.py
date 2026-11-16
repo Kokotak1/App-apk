@@ -77,7 +77,9 @@ for i in range(5):
 art = ImageEnhance.Brightness(art).enhance(0.77)
 art.save(OUT / "background.png", optimize=True)
 
-# Always-on display: dark background with sparse neutral markings.
+# AOD 2.5: dark OLED background with sparse, visibly brighter markings.
+# This changes ONLY aod_background.png, not the normal full-colour art.
+# Keeping small geometry ensures very low lit-pixel ratio.
 aod = Image.new("RGBA", (S, S), (0, 0, 0, 255))
 d = ImageDraw.Draw(aod)
 for i in range(12):
@@ -85,11 +87,11 @@ for i in range(12):
     r1, r2 = (187, 203) if i % 3 == 0 else (194, 202)
     x1, y1 = 225+r1*cos(a), 225+r1*sin(a)
     x2, y2 = 225+r2*cos(a), 225+r2*sin(a)
-    d.line((x1,y1,x2,y2), fill=(82,84,84,255) if i%3 == 0 else (46,49,49,255), width=3 if i%3 == 0 else 2)
-d.text((225, 82), "12", fill=(100,100,100,255), font=font(35, True), anchor="mm")
-d.text((391,225), "3", fill=(95,95,95,255), font=font(29,True), anchor="mm")
-d.text((225,384), "6", fill=(95,95,95,255), font=font(29,True), anchor="mm")
-d.text((60,225), "9", fill=(95,95,95,255), font=font(29,True), anchor="mm")
+    d.line((x1,y1,x2,y2), fill=(146,152,152,255) if i%3 == 0 else (100,110,110,255), width=3 if i%3 == 0 else 2)
+d.text((225, 82), "12", fill=(164,170,170,255), font=font(35, True), anchor="mm")
+d.text((391,225), "3", fill=(156,162,162,255), font=font(29,True), anchor="mm")
+d.text((225,384), "6", fill=(156,162,162,255), font=font(29,True), anchor="mm")
+d.text((60,225), "9", fill=(156,162,162,255), font=font(29,True), anchor="mm")
 aod.save(OUT / "aod_background.png", optimize=True)
 
 def hand(name, w, h, base):
