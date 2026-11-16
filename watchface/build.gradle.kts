@@ -2,14 +2,14 @@ plugins {
     id("com.android.application")
 }
 android {
-    namespace = "cz.youarefree.pipboyred24eco"
+    namespace = "cz.youarefree.pipboyred25eco"
     compileSdk = 36
     defaultConfig {
-        applicationId = "cz.youarefree.pipboyred24eco"
+        applicationId = "cz.youarefree.pipboyred25eco"
         minSdk = 33
         targetSdk = 36
-        versionCode = 11
-        versionName = "2.4"
+        versionCode = 12
+        versionName = "2.5"
     }
     buildTypes {
         getByName("release") { isMinifyEnabled = false }
