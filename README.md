@@ -66,3 +66,9 @@ Poznámka: APK jsou debug sestavení pro osobní test, nejsou to produkční Goo
 - Dynamické služby po čtyřech dnech, proklik na hodinový odpočet, baterie (48 % = 2/5 segmentů), datum, den v týdnu a hodinová i minutová ručička beze změny.
 - Aplikace odpočtu se **nemění**, stačí instalovat pouze nový ciferník `cz.youarefree.pipboyred22eco`.
 - Nelze zaručit úsporu výdrže bez měření na hodinkách; sekundová ručička vyžaduje obnovení displeje minimálně jednou za sekundu, když je ciferník aktivní.
+
+## Aktualizace hodinového odpočtu 1.2 – nový termín 1. 8. 2027
+- Samostatná aplikace `cz.youarefree.pipboy.countdown7` odpočítává do **1. srpna 2027 v 00:00 (Europe/Prague)**, přesně i při změně letního času.
+- Aktualizuje hodiny, minuty a sekundy pouze při otevřené obrazovce; v pozadí nemá naplánovanou periodickou úlohu.
+- Grafika ciferníku a červené počítadlo služeb **nejsou změněny**; počítadlo služeb nadále používá dosavadní cyklus.
+- Instalace nového debug APK se stejným ID může vyžadovat nejprve odinstalovat starou aplikaci odpočtu kvůli rozdílnému podpisovému certifikátu. Ciferník není třeba odinstalovat.
